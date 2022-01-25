@@ -1,13 +1,17 @@
 # Compiler
 [![codecov](https://codecov.io/gh/Boshen/compiler/branch/main/graph/badge.svg?token=84K6XNCP6R)](https://codecov.io/gh/Boshen/compiler)
 
+[Crate Documentation]
+
 This project is my attempt to learn and build a [ECMAScript] compiler from scratch.
 
-[ECMAScript]: https://www.ecma-international.org/publications-and-standards/standards/ecma-262/
-
-## Commands
+## Development
 
 ```bash
 cargo install watch
 cargo watch -x test -x clippy
 ```
+
+<!-- Links -->
+[ECMAScript]: https://www.ecma-international.org/publications-and-standards/standards/ecma-262/
+[Crate Documentation]: https://boshen.github.io/compiler/lexer/

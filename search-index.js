@@ -1,4 +1,4 @@
 var searchIndex = JSON.parse('{\
-"lexer":{"doc":"","t":[5],"n":["lex"],"q":["lexer"],"d":[""],"i":[0],"f":[[[],["string",3]]],"p":[]}\
+"lexer":{"doc":"","t":[3,13,4,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11],"n":["Lexer","Null","Token","borrow","borrow","borrow_mut","borrow_mut","eq","fmt","from","from","into","into","into_iter","new","next","try_from","try_from","try_into","try_into","type_id","type_id"],"q":["lexer","","","","","","","","","","","","","","","","","","","","",""],"d":["","","","","","","","","","","","","","","","","","","","","",""],"i":[0,1,0,2,1,2,1,1,1,2,1,2,1,2,2,2,2,1,2,1,2,1],"f":[null,null,null,[[]],[[]],[[]],[[]],[[["token",4]],["bool",15]],[[["formatter",3]],["result",6]],[[]],[[]],[[]],[[]],[[]],[[["str",15]]],[[],["option",4]],[[],["result",4]],[[],["result",4]],[[],["result",4]],[[],["result",4]],[[],["typeid",3]],[[],["typeid",3]]],"p":[[4,"Token"],[3,"Lexer"]]}\
 }');
 if (window.initSearch) {window.initSearch(searchIndex)};

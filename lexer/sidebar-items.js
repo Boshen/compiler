@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["lex",""]]});
+initSidebarItems({"enum":[["Token",""]],"struct":[["Lexer",""]]});

@@ -1,8 +1,10 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 
+#[cfg(test)]
 mod tests;
 
-#[must_use]
-pub fn lex() -> String {
-    "hello lexer!".to_string()
-}
+mod lexer;
+mod token;
+
+pub use crate::lexer::Lexer;
+pub use crate::token::Token;

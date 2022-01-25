@@ -1,7 +1,8 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 
-use lexer::lex;
+use lexer::Lexer;
 
 pub fn main() {
-    println!("{}", lex());
+    let tokens = Lexer::new("null").collect::<Vec<_>>();
+    println!("{tokens:?}");
 }

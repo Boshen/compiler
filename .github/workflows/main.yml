@@ -8,8 +8,8 @@ on:
 name: Main
 
 jobs:
-  main:
-    name: Run cargo fmt, clippy and test
+  test:
+    name: Run cargo fmt, clippy, check and test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -29,6 +29,34 @@ jobs:
 
       - name: Run cargo check
         run: cargo check --workspace --all-targets --release
+
+      - name: Run cargo test
+        run: cargo test
+
+  doc:
+    name: Deploy Doc
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install toolchain
+        run: rustup show
+
+      - name: Cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Build Doc
+        run: |
+          cargo doc --all --no-deps
+          echo "<meta http-equiv=\"refresh\" content=\"0; url=lexer\">" > target/doc/index.html
+
+      - name: Deploy Doc to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/doc
 
   coverage:
     name: Run Code Coverage

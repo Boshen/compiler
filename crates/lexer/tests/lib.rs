@@ -12,6 +12,9 @@ fn test_identifiers() {
 false finally for function if import in instanceof new null return super switch this throw true try typeof var void while with yield
     undefined
     $ _ $a _a abc_$
+    { ( ) [ ] . ... ; , < > <= >= == != === !== + - * % ** ++ -- << >> >>> & | ^ ! ~ && || ?? ? : = +=
+-= *= %= **= <<= >>= >>>= &= |= ^= &&= ||= ??= =>
+    ?. / /= }
     ";
     let tokens = Lexer::new(input.trim()).into_iter().collect::<Vec<_>>();
     let snapshot = format!("# Input\n{}\n---\n# Output\n{:#?}", input, tokens);

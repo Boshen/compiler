@@ -1,6 +1,6 @@
 ---
 source: crates/lexer/tests/lib.rs
-assertion_line: 21
+assertion_line: 24
 expression: identifiers
 
 ---
@@ -12,6 +12,9 @@ expression: identifiers
 false finally for function if import in instanceof new null return super switch this throw true try typeof var void while with yield
     undefined
     $ _ $a _a abc_$
+    { ( ) [ ] . ... ; , < > <= >= == != === !== + - * % ** ++ -- << >> >>> & | ^ ! ~ && || ?? ? : = +=
+-= *= %= **= <<= >>= >>>= &= |= ^= &&= ||= ??= =>
+    ?. / /= }
     
 ---
 # Output
@@ -37,7 +40,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 5,
     },
     Token {
-        kind: AWAIT,
+        kind: Await,
         offset: 48,
         len: 5,
     },
@@ -47,7 +50,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: BREAK,
+        kind: Break,
         offset: 54,
         len: 5,
     },
@@ -57,7 +60,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: CASE,
+        kind: Case,
         offset: 59,
         len: 4,
     },
@@ -67,7 +70,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: CATCH,
+        kind: Catch,
         offset: 65,
         len: 5,
     },
@@ -77,7 +80,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: CLASS,
+        kind: Class,
         offset: 71,
         len: 5,
     },
@@ -87,7 +90,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: CONST,
+        kind: Const,
         offset: 77,
         len: 5,
     },
@@ -97,7 +100,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: CONTINUE,
+        kind: Continue,
         offset: 86,
         len: 8,
     },
@@ -107,7 +110,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: DEBUGGER,
+        kind: Debugger,
         offset: 95,
         len: 8,
     },
@@ -117,7 +120,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: DEFAULT,
+        kind: DefaulT,
         offset: 103,
         len: 7,
     },
@@ -127,7 +130,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: DELETE,
+        kind: Delete,
         offset: 110,
         len: 6,
     },
@@ -137,7 +140,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: DO,
+        kind: Do,
         offset: 113,
         len: 2,
     },
@@ -147,7 +150,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: ELSE,
+        kind: Else,
         offset: 118,
         len: 4,
     },
@@ -157,7 +160,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: ENUM,
+        kind: Enum,
         offset: 123,
         len: 4,
     },
@@ -167,7 +170,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: EXPORT,
+        kind: Export,
         offset: 130,
         len: 6,
     },
@@ -177,7 +180,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: EXTENDS,
+        kind: Extends,
         offset: 138,
         len: 7,
     },
@@ -187,7 +190,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: FALSE,
+        kind: False,
         offset: 144,
         len: 5,
     },
@@ -197,7 +200,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: FINALLY,
+        kind: FinallY,
         offset: 152,
         len: 7,
     },
@@ -207,7 +210,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: FOR,
+        kind: For,
         offset: 156,
         len: 3,
     },
@@ -217,7 +220,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: FUNCTION,
+        kind: Function,
         offset: 165,
         len: 8,
     },
@@ -227,7 +230,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: IF,
+        kind: If,
         offset: 168,
         len: 2,
     },
@@ -237,7 +240,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: IMPORT,
+        kind: Import,
         offset: 175,
         len: 6,
     },
@@ -247,7 +250,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: IN,
+        kind: In,
         offset: 178,
         len: 2,
     },
@@ -257,7 +260,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: INSTANCEOF,
+        kind: Instanceof,
         offset: 189,
         len: 10,
     },
@@ -267,7 +270,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: NEW,
+        kind: New,
         offset: 193,
         len: 3,
     },
@@ -277,7 +280,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: NULL,
+        kind: Null,
         offset: 198,
         len: 4,
     },
@@ -287,7 +290,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: RETURN,
+        kind: Return,
         offset: 205,
         len: 6,
     },
@@ -297,7 +300,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: SUPER,
+        kind: Super,
         offset: 211,
         len: 5,
     },
@@ -307,7 +310,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: SWITCH,
+        kind: Switch,
         offset: 218,
         len: 6,
     },
@@ -317,7 +320,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: THIS,
+        kind: This,
         offset: 223,
         len: 4,
     },
@@ -327,7 +330,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: THROW,
+        kind: Throw,
         offset: 229,
         len: 5,
     },
@@ -337,7 +340,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: TRUE,
+        kind: True,
         offset: 234,
         len: 4,
     },
@@ -347,7 +350,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: TRY,
+        kind: Try,
         offset: 238,
         len: 3,
     },
@@ -357,7 +360,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: TYPEOF,
+        kind: Typeof,
         offset: 245,
         len: 6,
     },
@@ -367,7 +370,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: VAR,
+        kind: Var,
         offset: 249,
         len: 3,
     },
@@ -377,7 +380,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: VOID,
+        kind: Void,
         offset: 254,
         len: 4,
     },
@@ -387,7 +390,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: WHILE,
+        kind: While,
         offset: 260,
         len: 5,
     },
@@ -397,7 +400,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: WITH,
+        kind: With,
         offset: 265,
         len: 4,
     },
@@ -407,7 +410,7 @@ false finally for function if import in instanceof new null return super switch 
         len: 1,
     },
     Token {
-        kind: YIELD,
+        kind: Yield,
         offset: 271,
         len: 5,
     },
@@ -472,8 +475,578 @@ false finally for function if import in instanceof new null return super switch 
         len: 5,
     },
     Token {
+        kind: WhiteSpace,
+        offset: 310,
+        len: 5,
+    },
+    Token {
+        kind: LCurly,
+        offset: 311,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 312,
+        len: 1,
+    },
+    Token {
+        kind: LParen,
+        offset: 313,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 314,
+        len: 1,
+    },
+    Token {
+        kind: RParen,
+        offset: 315,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 316,
+        len: 1,
+    },
+    Token {
+        kind: LBrack,
+        offset: 317,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 318,
+        len: 1,
+    },
+    Token {
+        kind: RBrack,
+        offset: 319,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 320,
+        len: 1,
+    },
+    Token {
+        kind: Dot,
+        offset: 321,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 322,
+        len: 1,
+    },
+    Token {
+        kind: Dot3,
+        offset: 325,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 326,
+        len: 1,
+    },
+    Token {
+        kind: Semicolon,
+        offset: 327,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 328,
+        len: 1,
+    },
+    Token {
+        kind: Comma,
+        offset: 329,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 330,
+        len: 1,
+    },
+    Token {
+        kind: LAngle,
+        offset: 331,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 332,
+        len: 1,
+    },
+    Token {
+        kind: RAngle,
+        offset: 333,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 334,
+        len: 1,
+    },
+    Token {
+        kind: LtEq,
+        offset: 336,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 337,
+        len: 1,
+    },
+    Token {
+        kind: GtEq,
+        offset: 339,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 340,
+        len: 1,
+    },
+    Token {
+        kind: Eq2,
+        offset: 342,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 343,
+        len: 1,
+    },
+    Token {
+        kind: Neq,
+        offset: 345,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 346,
+        len: 1,
+    },
+    Token {
+        kind: Eq3,
+        offset: 349,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 350,
+        len: 1,
+    },
+    Token {
+        kind: Neq2,
+        offset: 353,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 354,
+        len: 1,
+    },
+    Token {
+        kind: Plus,
+        offset: 355,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 356,
+        len: 1,
+    },
+    Token {
+        kind: Minus,
+        offset: 357,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 358,
+        len: 1,
+    },
+    Token {
+        kind: Star,
+        offset: 359,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 360,
+        len: 1,
+    },
+    Token {
+        kind: Percent,
+        offset: 361,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 362,
+        len: 1,
+    },
+    Token {
+        kind: Star2,
+        offset: 364,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 365,
+        len: 1,
+    },
+    Token {
+        kind: Plus2,
+        offset: 367,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 368,
+        len: 1,
+    },
+    Token {
+        kind: Minus2,
+        offset: 370,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 371,
+        len: 1,
+    },
+    Token {
+        kind: ShiftLeft,
+        offset: 373,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 374,
+        len: 1,
+    },
+    Token {
+        kind: ShiftRight,
+        offset: 376,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 377,
+        len: 1,
+    },
+    Token {
+        kind: ShiftRight3,
+        offset: 380,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 381,
+        len: 1,
+    },
+    Token {
+        kind: Amp,
+        offset: 382,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 383,
+        len: 1,
+    },
+    Token {
+        kind: Pipe,
+        offset: 384,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 385,
+        len: 1,
+    },
+    Token {
+        kind: Caret,
+        offset: 386,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 387,
+        len: 1,
+    },
+    Token {
+        kind: Bang,
+        offset: 388,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 389,
+        len: 1,
+    },
+    Token {
+        kind: Tilde,
+        offset: 390,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 391,
+        len: 1,
+    },
+    Token {
+        kind: Amp2,
+        offset: 393,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 394,
+        len: 1,
+    },
+    Token {
+        kind: Pipe2,
+        offset: 396,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 397,
+        len: 1,
+    },
+    Token {
+        kind: Question2,
+        offset: 399,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 400,
+        len: 1,
+    },
+    Token {
+        kind: Question,
+        offset: 401,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 402,
+        len: 1,
+    },
+    Token {
+        kind: Colon,
+        offset: 403,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 404,
+        len: 1,
+    },
+    Token {
+        kind: Eq,
+        offset: 405,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 406,
+        len: 1,
+    },
+    Token {
+        kind: PlusEq,
+        offset: 408,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 409,
+        len: 1,
+    },
+    Token {
+        kind: MinusEq,
+        offset: 411,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 412,
+        len: 1,
+    },
+    Token {
+        kind: StarEq,
+        offset: 414,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 415,
+        len: 1,
+    },
+    Token {
+        kind: PercentEq,
+        offset: 417,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 418,
+        len: 1,
+    },
+    Token {
+        kind: Star2Eq,
+        offset: 421,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 422,
+        len: 1,
+    },
+    Token {
+        kind: ShiftLeftEq,
+        offset: 425,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 426,
+        len: 1,
+    },
+    Token {
+        kind: ShiftRightEq,
+        offset: 429,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 430,
+        len: 1,
+    },
+    Token {
+        kind: ShiftRight3Eq,
+        offset: 434,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 435,
+        len: 1,
+    },
+    Token {
+        kind: AmpEq,
+        offset: 437,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 438,
+        len: 1,
+    },
+    Token {
+        kind: PipeEq,
+        offset: 440,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 441,
+        len: 1,
+    },
+    Token {
+        kind: CaretEq,
+        offset: 443,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 444,
+        len: 1,
+    },
+    Token {
+        kind: Amp2Eq,
+        offset: 447,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 448,
+        len: 1,
+    },
+    Token {
+        kind: Pipe2Eq,
+        offset: 451,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 452,
+        len: 1,
+    },
+    Token {
+        kind: Question2Eq,
+        offset: 455,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 456,
+        len: 1,
+    },
+    Token {
+        kind: FatArrow,
+        offset: 458,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 463,
+        len: 5,
+    },
+    Token {
+        kind: QuestionDot,
+        offset: 465,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 466,
+        len: 1,
+    },
+    Token {
+        kind: Slash,
+        offset: 467,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 468,
+        len: 1,
+    },
+    Token {
+        kind: SlashEq,
+        offset: 470,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 471,
+        len: 1,
+    },
+    Token {
+        kind: RCurly,
+        offset: 472,
+        len: 1,
+    },
+    Token {
         kind: EOF,
-        offset: 305,
+        offset: 472,
         len: 1,
     },
 ]

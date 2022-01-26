@@ -1,0 +1,68 @@
+---
+source: crates/lexer/tests/lib.rs
+assertion_line: 20
+expression: identifiers
+
+---
+# Input
+
+    null
+    undefined
+    true
+    false
+    aaa
+    
+---
+# Output
+[
+    Token {
+        kind: Null,
+        offset: 0,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 4,
+        len: 5,
+    },
+    Token {
+        kind: Undefined,
+        offset: 9,
+        len: 9,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 18,
+        len: 5,
+    },
+    Token {
+        kind: True,
+        offset: 23,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 27,
+        len: 5,
+    },
+    Token {
+        kind: False,
+        offset: 32,
+        len: 5,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 37,
+        len: 5,
+    },
+    Token {
+        kind: Ident,
+        offset: 42,
+        len: 3,
+    },
+    Token {
+        kind: EOF,
+        offset: 45,
+        len: 1,
+    },
+]

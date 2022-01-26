@@ -1,10 +1,9 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 
-#[cfg(test)]
-mod tests;
-
+mod kind;
 mod lexer;
 mod token;
 
-pub use crate::lexer::Lexer;
-pub use crate::token::Token;
+pub use crate::kind::*;
+pub use crate::lexer::*;
+pub use crate::token::*;

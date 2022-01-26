@@ -2,3 +2,6 @@
 name = "lexer"
 version = "0.0.0"
 edition = "2021"
+
+[dev-dependencies]
+insta = "1.11.0"

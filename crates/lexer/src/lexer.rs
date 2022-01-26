@@ -38,7 +38,8 @@ impl Iterator for Lexer<'_> {
         }
 
         let token = self
-            .read_whitespace()
+            .read_line_terminator()
+            .or_else(|| self.read_whitespace())
             .or_else(|| self.read_identifier())
             .or_else(|| Some(Token::new(Kind::Unknown, self.cur, 1)));
 
@@ -49,21 +50,40 @@ impl Iterator for Lexer<'_> {
 }
 
 impl Lexer<'_> {
+    /// Section 12.2 Whitespace
+    /// TODO read all whitespace codepoints
     fn read_whitespace(&mut self) -> Option<Token> {
         let mut len = 0;
-
         for chr in &self.bytes[self.cur..] {
             if !chr.is_ascii_whitespace() {
                 break;
             }
             len += 1;
         }
-
         if len == 0 {
             return None;
         }
-
         Some(Token::new(Kind::WhiteSpace, self.cur, len))
+    }
+
+    /// Section 12.3 Line Terminators
+    fn read_line_terminator(&mut self) -> Option<Token> {
+        let start = self.cur;
+        loop {
+            let chr = self.bytes[self.cur];
+            if matches!(chr, b'\n' | b'\r') {
+                self.cur += '\n'.len_utf8();
+            } else if matches!(self.unicode_char(), '\u{2028}' | '\u{2029}') {
+                self.cur += '\u{2028}'.len_utf8();
+            } else {
+                break;
+            }
+        }
+        let len = self.cur - start;
+        if len == 0 {
+            return None;
+        }
+        Some(Token::new(Kind::Newline, self.cur, len))
     }
 
     fn read_identifier(&mut self) -> Option<Token> {
@@ -89,5 +109,14 @@ impl Lexer<'_> {
         };
 
         Some(Token::new(kind, self.cur, len))
+    }
+
+    /// Get the next unicode character
+    fn unicode_char(&self) -> char {
+        let string = unsafe { std::str::from_utf8_unchecked(self.bytes.get_unchecked(self.cur..)) };
+        if let Some(chr) = string.chars().next() {
+            return chr;
+        }
+        unreachable!()
     }
 }

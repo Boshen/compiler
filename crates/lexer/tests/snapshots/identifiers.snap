@@ -21,9 +21,14 @@ expression: identifiers
         len: 4,
     },
     Token {
+        kind: Newline,
+        offset: 5,
+        len: 1,
+    },
+    Token {
         kind: WhiteSpace,
-        offset: 4,
-        len: 5,
+        offset: 6,
+        len: 3,
     },
     Token {
         kind: Undefined,
@@ -31,9 +36,14 @@ expression: identifiers
         len: 9,
     },
     Token {
+        kind: Newline,
+        offset: 19,
+        len: 1,
+    },
+    Token {
         kind: WhiteSpace,
-        offset: 18,
-        len: 5,
+        offset: 20,
+        len: 3,
     },
     Token {
         kind: True,
@@ -41,9 +51,14 @@ expression: identifiers
         len: 4,
     },
     Token {
+        kind: Newline,
+        offset: 28,
+        len: 1,
+    },
+    Token {
         kind: WhiteSpace,
-        offset: 27,
-        len: 5,
+        offset: 29,
+        len: 3,
     },
     Token {
         kind: False,
@@ -51,9 +66,14 @@ expression: identifiers
         len: 5,
     },
     Token {
+        kind: Newline,
+        offset: 38,
+        len: 1,
+    },
+    Token {
         kind: WhiteSpace,
-        offset: 37,
-        len: 5,
+        offset: 39,
+        len: 3,
     },
     Token {
         kind: Ident,

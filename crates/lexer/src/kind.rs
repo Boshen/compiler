@@ -7,6 +7,7 @@ pub enum Kind {
     // whitespace
     EOF,
     WhiteSpace,
+    Newline,
 
     // keyword
     Null,

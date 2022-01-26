@@ -6,6 +6,8 @@ use lexer::Lexer;
 #[test]
 fn test_identifiers() {
     let input = "
+    // comment
+    /* multiline comment */
     null
     undefined
     true

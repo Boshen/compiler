@@ -4,10 +4,14 @@
 pub enum Kind {
     Unknown,
 
-    // whitespace
     EOF,
+    // 12.2
     WhiteSpace,
-    Newline,
+    // 12.3
+    LineTerminator,
+    // 12.4
+    Comment,
+    MultilineComment,
 
     // keyword
     Null,

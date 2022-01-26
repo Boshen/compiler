@@ -40,7 +40,7 @@ impl Iterator for Lexer<'_> {
         self.read_whitespace()
             .or_else(|| self.read_line_terminator())
             .or_else(|| self.read_comment())
-            .or_else(|| self.read_identifier())
+            .or_else(|| self.read_name_or_keyword())
             .or_else(|| Some(Token::new(Kind::Unknown, self.cur, 1)))
     }
 }
@@ -113,29 +113,21 @@ impl Lexer<'_> {
         }
     }
 
-    fn read_identifier(&mut self) -> Option<Token> {
-        let mut len = 0;
-
-        for chr in &self.bytes[self.cur..] {
-            if !chr.is_ascii_alphabetic() {
+    /// Section 12.6 Names and Keywords
+    fn read_name_or_keyword(&mut self) -> Option<Token> {
+        let start = self.cur;
+        while self.bytes.get(self.cur).is_some() {
+            if self.is_ident() {
+                self.cur += 1;
+            } else {
                 break;
             }
-            len += 1;
         }
-
+        let len = self.cur - start;
         if len == 0 {
             return None;
         }
-
-        let kind = match &self.bytes[self.cur..self.cur + len] {
-            b"null" => Kind::Null,
-            b"undefined" => Kind::Undefined,
-            b"true" => Kind::True,
-            b"false" => Kind::False,
-            _ => Kind::Ident,
-        };
-
-        self.cur += len;
+        let kind = Lexer::read_keyword(&self.bytes[start..self.cur]);
         Some(Token::new(kind, self.cur, len))
     }
 
@@ -165,5 +157,57 @@ impl Lexer<'_> {
             return chr;
         }
         unreachable!()
+    }
+
+    /// Section 12.6
+    // TODO read Unicode
+    const fn is_ident(&self) -> bool {
+        let b = self.bytes[self.cur];
+        b.is_ascii_alphabetic() || matches!(b, b'_' | b'$')
+    }
+
+    /// Section 12.6.2 Keywords and Reserved Words
+    const fn read_keyword(bytes: &[u8]) -> Kind {
+        match bytes {
+            b"await" => Kind::AWAIT,
+            b"break" => Kind::BREAK,
+            b"case" => Kind::CASE,
+            b"catch" => Kind::CATCH,
+            b"class" => Kind::CLASS,
+            b"const" => Kind::CONST,
+            b"continue" => Kind::CONTINUE,
+            b"debugger" => Kind::DEBUGGER,
+            b"default" => Kind::DEFAULT,
+            b"delete" => Kind::DELETE,
+            b"do" => Kind::DO,
+            b"else" => Kind::ELSE,
+            b"enum" => Kind::ENUM,
+            b"export" => Kind::EXPORT,
+            b"extends" => Kind::EXTENDS,
+            b"false" => Kind::FALSE,
+            b"finally" => Kind::FINALLY,
+            b"for" => Kind::FOR,
+            b"function" => Kind::FUNCTION,
+            b"if" => Kind::IF,
+            b"in" => Kind::IN,
+            b"import" => Kind::IMPORT,
+            b"instanceof" => Kind::INSTANCEOF,
+            b"new" => Kind::NEW,
+            b"null" => Kind::NULL,
+            b"return" => Kind::RETURN,
+            b"super" => Kind::SUPER,
+            b"switch" => Kind::SWITCH,
+            b"this" => Kind::THIS,
+            b"throw" => Kind::THROW,
+            b"try" => Kind::TRY,
+            b"true" => Kind::TRUE,
+            b"typeof" => Kind::TYPEOF,
+            b"var" => Kind::VAR,
+            b"void" => Kind::VOID,
+            b"while" => Kind::WHILE,
+            b"with" => Kind::WITH,
+            b"yield" => Kind::YIELD,
+            _ => Kind::Ident,
+        }
     }
 }

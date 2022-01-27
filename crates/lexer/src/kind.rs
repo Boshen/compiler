@@ -128,4 +128,6 @@ pub enum Kind {
     Str,
     // 12.8.5 Regular Expression Literals
     Regex,
+    // 12.8.6 Template Literal Lexical Components
+    Template,
 }

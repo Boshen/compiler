@@ -36,6 +36,7 @@ impl Iterator for Lexer<'_> {
             .or_else(|| self.read_punctuator(bytes))
             .or_else(|| self.read_number(bytes))
             .or_else(|| self.read_string_literal(bytes))
+            .or_else(|| self.read_template_literal(bytes))
             .or_else(|| Some(Token::new(Kind::Unknown, self.cur, 1)));
 
         if let Some(t) = token.as_ref() {
@@ -487,7 +488,7 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    // 12.8.5 Regular Expression Literals
+    /// 12.8.5 Regular Expression Literals
     fn read_regex(&self, bytes: &[u8]) -> Option<Token> {
         match bytes[0] {
             // TODO combine this check with comment slash and single slash
@@ -499,6 +500,17 @@ impl<'a> Lexer<'a> {
                 }
                 let len = bytes[1..].iter().take_while(|b| b != &&b'/').count();
                 Some(Token::new(Kind::Regex, self.cur, len + 2))
+            }
+            _ => None,
+        }
+    }
+
+    /// 12.8.6 Template Literal Lexical Components
+    fn read_template_literal(&self, bytes: &[u8]) -> Option<Token> {
+        match bytes[0] {
+            b'`' => {
+                let len = bytes[1..].iter().take_while(|b| b != &&b'`').count();
+                Some(Token::new(Kind::Template, self.cur, len + 2))
             }
             _ => None,
         }

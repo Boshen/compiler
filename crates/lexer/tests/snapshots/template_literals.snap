@@ -1,0 +1,24 @@
+---
+source: crates/lexer/tests/lib.rs
+assertion_line: 12
+expression: template_literals
+
+---
+# Input
+
+`123`
+    
+---
+# Output
+[
+    Token {
+        kind: Template,
+        offset: 0,
+        len: 5,
+    },
+    Token {
+        kind: EOF,
+        offset: 5,
+        len: 1,
+    },
+]

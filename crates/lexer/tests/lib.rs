@@ -57,3 +57,11 @@ fn regex() {
     "#;
     test_snapshot("regex", input);
 }
+
+#[test]
+fn template_literal() {
+    let input = r#"
+`123`
+    "#;
+    test_snapshot("template_literals", input);
+}

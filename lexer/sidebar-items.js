@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Token",""]],"struct":[["Lexer",""]]});
+initSidebarItems({"enum":[["Kind",""],["Number",""]],"struct":[["Lexer",""],["Token",""]]});

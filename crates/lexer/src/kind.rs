@@ -124,4 +124,6 @@ pub enum Kind {
     False,
     // 12.8.3 Numeric Literals
     Number(Number),
+    // 12.8.4 String Literals
+    Str,
 }

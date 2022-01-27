@@ -41,3 +41,11 @@ fn numeric_literals() {
     ";
     test_snapshot("numeric_literals", input);
 }
+
+#[test]
+fn string_literals() {
+    let input = r#"
+"12345" '12345'
+    "#;
+    test_snapshot("string_literals", input);
+}

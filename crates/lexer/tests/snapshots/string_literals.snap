@@ -1,0 +1,34 @@
+---
+source: crates/lexer/tests/lib.rs
+assertion_line: 12
+expression: string_literals
+
+---
+# Input
+
+"12345" '12345'
+    
+---
+# Output
+[
+    Token {
+        kind: Str,
+        offset: 0,
+        len: 7,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 7,
+        len: 1,
+    },
+    Token {
+        kind: Str,
+        offset: 8,
+        len: 7,
+    },
+    Token {
+        kind: EOF,
+        offset: 15,
+        len: 1,
+    },
+]

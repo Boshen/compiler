@@ -32,8 +32,9 @@ impl Iterator for Lexer<'_> {
             .or_else(|| self.read_line_terminators(bytes))
             .or_else(|| self.read_comment(bytes))
             .or_else(|| self.read_name_or_keyword(bytes))
-            .or_else(|| self.read_punctuators(bytes))
+            .or_else(|| self.read_punctuator(bytes))
             .or_else(|| self.read_number(bytes))
+            .or_else(|| self.read_string_literal(bytes))
             .or_else(|| Some(Token::new(Kind::Unknown, self.cur, 1)));
 
         if let Some(t) = token.as_ref() {
@@ -128,7 +129,7 @@ impl<'a> Lexer<'a> {
 
     /// Section 12.7 Punctuators
     #[allow(clippy::cognitive_complexity, clippy::too_many_lines)]
-    fn read_punctuators(&self, bytes: &[u8]) -> Option<Token> {
+    fn read_punctuator(&self, bytes: &[u8]) -> Option<Token> {
         let mut cur = 0;
         let kind = match bytes[cur] {
             b'{' => Kind::LCurly,
@@ -464,6 +465,22 @@ impl<'a> Lexer<'a> {
                     }
                 }
                 Some(Token::new(Kind::Number(kind), self.cur, len))
+            }
+            _ => None,
+        }
+    }
+
+    // 12.8.4 String Literals
+    fn read_string_literal(&self, bytes: &[u8]) -> Option<Token> {
+        match bytes[0] {
+            b'\'' => {
+                let len = bytes[1..].iter().take_while(|b| b != &&b'\'').count();
+                Some(Token::new(Kind::Str, self.cur, len + 2))
+            }
+            b'"' => {
+                let len = bytes[1..].iter().take_while(|b| b != &&b'"').count();
+                dbg!(&len);
+                Some(Token::new(Kind::Str, self.cur, len + 2))
             }
             _ => None,
         }

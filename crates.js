@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["lexer"];
+window.ALL_CRATES = ["coverage","lexer"];

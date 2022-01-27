@@ -536,7 +536,6 @@
 <span id="535">535</span>
 <span id="536">536</span>
 <span id="537">537</span>
-<span id="538">538</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Lexer</span>
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::kind</span>::{<span class="ident">Kind</span>, <span class="ident">Number</span>};
@@ -1020,7 +1019,6 @@
             }
             <span class="string">b&#39;&quot;&#39;</span> =&gt; {
                 <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="number">1</span>..].<span class="ident">iter</span>().<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> <span class="ident">b</span> <span class="op">!</span><span class="op">=</span> <span class="op">&amp;&amp;</span><span class="string">b&#39;&quot;&#39;</span>).<span class="ident">count</span>();
-                <span class="macro">dbg!</span>(<span class="kw-2">&amp;</span><span class="ident">len</span>);
                 <span class="prelude-val">Some</span>(<span class="ident">Token::new</span>(<span class="ident">Kind::Str</span>, <span class="self">self</span>.<span class="ident">cur</span>, <span class="ident">len</span> <span class="op">+</span> <span class="number">2</span>))
             }
             <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,

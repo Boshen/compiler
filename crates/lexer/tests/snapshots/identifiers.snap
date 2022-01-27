@@ -1020,19 +1020,14 @@ $ _ $a _a abc_$
         len: 1,
     },
     Token {
-        kind: Slash,
+        kind: Regex,
         offset: 442,
-        len: 1,
+        len: 3,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 443,
+        kind: Eq,
+        offset: 445,
         len: 1,
-    },
-    Token {
-        kind: SlashEq,
-        offset: 444,
-        len: 2,
     },
     Token {
         kind: WhiteSpace,

@@ -126,4 +126,6 @@ pub enum Kind {
     Number(Number),
     // 12.8.4 String Literals
     Str,
+    // 12.8.5 Regular Expression Literals
+    Regex,
 }

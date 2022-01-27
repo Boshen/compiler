@@ -31,6 +31,7 @@ impl Iterator for Lexer<'_> {
             .read_whitespaces(bytes)
             .or_else(|| self.read_line_terminators(bytes))
             .or_else(|| self.read_comment(bytes))
+            .or_else(|| self.read_regex(bytes))
             .or_else(|| self.read_name_or_keyword(bytes))
             .or_else(|| self.read_punctuator(bytes))
             .or_else(|| self.read_number(bytes))
@@ -481,6 +482,23 @@ impl<'a> Lexer<'a> {
                 let len = bytes[1..].iter().take_while(|b| b != &&b'"').count();
                 dbg!(&len);
                 Some(Token::new(Kind::Str, self.cur, len + 2))
+            }
+            _ => None,
+        }
+    }
+
+    // 12.8.5 Regular Expression Literals
+    fn read_regex(&self, bytes: &[u8]) -> Option<Token> {
+        match bytes[0] {
+            // TODO combine this check with comment slash and single slash
+            b'/' => {
+                if let Some(b) = bytes.get(1) {
+                    if b == &b'/' {
+                        return None;
+                    }
+                }
+                let len = bytes[1..].iter().take_while(|b| b != &&b'/').count();
+                Some(Token::new(Kind::Regex, self.cur, len + 2))
             }
             _ => None,
         }

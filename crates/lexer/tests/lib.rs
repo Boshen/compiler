@@ -49,3 +49,11 @@ fn string_literals() {
     "#;
     test_snapshot("string_literals", input);
 }
+
+#[test]
+fn regex() {
+    let input = r#"
+/aa/
+    "#;
+    test_snapshot("regex", input);
+}

@@ -1,6 +1,16 @@
 //! ECMAScript Token Kinds
 
 #[derive(Debug, PartialEq)]
+pub enum Number {
+    Decimal,
+    Float,
+    Binary,
+    Octal,
+    Hex,
+    BigInt,
+}
+
+#[derive(Debug, PartialEq)]
 pub enum Kind {
     Unknown,
     EOF,
@@ -29,7 +39,6 @@ pub enum Kind {
     Enum,
     Export,
     Extends,
-    False,
     FinallY,
     For,
     Function,
@@ -38,14 +47,12 @@ pub enum Kind {
     Import,
     Instanceof,
     New,
-    Null,
     Return,
     Super,
     Switch,
     This,
     Throw,
     Try,
-    True,
     Typeof,
     Var,
     Void,
@@ -110,4 +117,11 @@ pub enum Kind {
     Percent,
     PercentEq,
     Colon,
+    // 12.8.1 Null Literals
+    Null,
+    // 12.8.2 Boolean Literals
+    True,
+    False,
+    // 12.8.3 Numeric Literals
+    Number(Number),
 }

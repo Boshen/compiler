@@ -1,0 +1,168 @@
+---
+source: crates/lexer/tests/lib.rs
+assertion_line: 12
+expression: numeric_literals
+
+---
+# Input
+
+0 123
+0b1 0B12
+0o1 0O12
+0x1 0X12
+0123 0789
+0n 123n
+    
+---
+# Output
+[
+    Token {
+        kind: Unknown,
+        offset: 0,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 1,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 2,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 5,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Binary,
+        ),
+        offset: 6,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 9,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Binary,
+        ),
+        offset: 10,
+        len: 3,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 13,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 14,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Octal,
+        ),
+        offset: 15,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 18,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Octal,
+        ),
+        offset: 19,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 23,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Hex,
+        ),
+        offset: 24,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 27,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Hex,
+        ),
+        offset: 28,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 32,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Octal,
+        ),
+        offset: 33,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 37,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 38,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 42,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            BigInt,
+        ),
+        offset: 43,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 45,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            BigInt,
+        ),
+        offset: 46,
+        len: 4,
+    },
+    Token {
+        kind: EOF,
+        offset: 50,
+        len: 1,
+    },
+]

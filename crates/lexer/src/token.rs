@@ -3,7 +3,7 @@
 use crate::kind::Kind;
 
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Token {
     /// Token Kind
     kind: Kind,

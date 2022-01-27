@@ -1,6 +1,6 @@
 //! Lexer
 
-use crate::kind::Kind;
+use crate::kind::{Kind, Number};
 use crate::token::Token;
 
 pub struct Lexer<'a> {
@@ -33,6 +33,7 @@ impl Iterator for Lexer<'_> {
             .or_else(|| self.read_comment(bytes))
             .or_else(|| self.read_name_or_keyword(bytes))
             .or_else(|| self.read_punctuators(bytes))
+            .or_else(|| self.read_number(bytes))
             .or_else(|| Some(Token::new(Kind::Unknown, self.cur, 1)));
 
         if let Some(t) = token.as_ref() {
@@ -374,6 +375,97 @@ impl<'a> Lexer<'a> {
             b"with" => Kind::With,
             b"yield" => Kind::Yield,
             _ => Kind::Ident,
+        }
+    }
+
+    /// 12.8.3 Numeric Literals
+    /// TODO numeric separators
+    /// TODO exponential
+    /// TODO sign
+    /// TODO float
+    fn read_number(&self, bytes: &[u8]) -> Option<Token> {
+        match bytes[0] {
+            b'0' => {
+                match bytes[1..] {
+                    [b'b' | b'B', n, ..] => {
+                        if matches!(n, b'0'..=b'1') {
+                            let len = bytes[2..]
+                                .iter()
+                                .take_while(|b| matches!(b, b'0'..=b'1'))
+                                .count();
+                            Some(Token::new(Kind::Number(Number::Binary), self.cur, len + 2))
+                        } else {
+                            None
+                        }
+                    }
+                    [b'o' | b'O', n, ..] => {
+                        if matches!(n, b'0'..=b'7') {
+                            let len = bytes[2..]
+                                .iter()
+                                .take_while(|b| matches!(b, b'0'..=b'7'))
+                                .count();
+                            Some(Token::new(Kind::Number(Number::Octal), self.cur, len + 2))
+                        } else {
+                            None
+                        }
+                    }
+                    [b'x' | b'X', n, ..] => {
+                        if n.is_ascii_hexdigit() {
+                            let len = bytes[2..]
+                                .iter()
+                                .take_while(|b| b.is_ascii_hexdigit())
+                                .count();
+                            Some(Token::new(Kind::Number(Number::Hex), self.cur, len + 2))
+                        } else {
+                            None
+                        }
+                    }
+                    [b'e' | b'E', n, ..] => {
+                        if n.is_ascii_digit() {
+                            let len = bytes[2..]
+                                .iter()
+                                .take_while(|b| b.is_ascii_hexdigit())
+                                .count();
+                            Some(Token::new(Kind::Number(Number::Decimal), self.cur, len + 2))
+                        } else {
+                            None
+                        }
+                    }
+                    [n, ..] => {
+                        // legacy octal
+                        if n.is_ascii_digit() {
+                            let mut kind = Number::Octal;
+                            let len = bytes[1..]
+                                .iter()
+                                .take_while(|b| {
+                                    if matches!(b, b'8'..=b'9') {
+                                        kind = Number::Decimal;
+                                    }
+                                    b.is_ascii_digit()
+                                })
+                                .count();
+                            Some(Token::new(Kind::Number(kind), self.cur, len + 1))
+                        } else if n == b'n' {
+                            Some(Token::new(Kind::Number(Number::BigInt), self.cur, 2))
+                        } else {
+                            None
+                        }
+                    }
+                    _ => None,
+                }
+            }
+            n if n.is_ascii_digit() => {
+                let mut len = 1 + bytes[1..].iter().take_while(|b| b.is_ascii_digit()).count();
+                let mut kind = Number::Decimal;
+                if let Some(b) = bytes.get(len) {
+                    if b == &b'n' {
+                        len += 1;
+                        kind = Number::BigInt;
+                    }
+                }
+                Some(Token::new(Kind::Number(kind), self.cur, len))
+            }
+            _ => None,
         }
     }
 

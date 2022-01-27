@@ -30,4 +30,9 @@ impl Token {
     pub const fn is_empty(&self) -> bool {
         self.len == 0
     }
+
+    #[must_use]
+    pub fn is_unknown(&self) -> bool {
+        self.kind == Kind::Unknown
+    }
 }

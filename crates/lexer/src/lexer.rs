@@ -481,7 +481,6 @@ impl<'a> Lexer<'a> {
             }
             b'"' => {
                 let len = bytes[1..].iter().take_while(|b| b != &&b'"').count();
-                dbg!(&len);
                 Some(Token::new(Kind::Str, self.cur, len + 2))
             }
             _ => None,

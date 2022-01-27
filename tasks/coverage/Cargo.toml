@@ -1,0 +1,12 @@
+[package]
+name = "coverage"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+lexer = { path = "../../crates/lexer" }
+
+walkdir = "2.3.2"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
+rayon = "1.5"

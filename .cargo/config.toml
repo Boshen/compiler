@@ -1,0 +1,2 @@
+[alias]
+coverage = "run -p coverage --release --"

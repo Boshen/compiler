@@ -58,9 +58,12 @@ fn main() {
     let mut files = SimpleFiles::new();
     let mut lexers = Vec::with_capacity(codes.len());
     for (path, code) in &codes {
-        let (code, _meta) = read_metadata(code.as_str()).unwrap();
-        let file_id = files.add(path, code);
-        lexers.push((file_id, Lexer::new(code)));
+        let (code, meta) = read_metadata(code.as_str()).unwrap();
+        // TODO: re-enable negative tests
+        if meta.negative.is_none() {
+            let file_id = files.add(path, code);
+            lexers.push((file_id, Lexer::new(code)));
+        }
     }
 
     println!("Running Lexer ...");

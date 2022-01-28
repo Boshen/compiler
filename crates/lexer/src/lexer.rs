@@ -36,12 +36,13 @@ impl Iterator for Lexer<'_> {
 
         let result = match self.bytes[self.cur] {
             b'/' => self.read_slash(bytes),
+            b'0' => self.read_zero(bytes),
+            b'1'..=b'9' => self.read_number(bytes),
             _ => self
                 .read_whitespaces(bytes)
                 .or_else(|| self.read_line_terminators(bytes))
                 .or_else(|| self.read_name_or_keyword(bytes))
                 .or_else(|| self.read_punctuator(bytes))
-                .or_else(|| self.read_number(bytes))
                 .or_else(|| self.read_string_literal(bytes))
                 .or_else(|| self.read_template_literal(bytes)),
         };
@@ -396,40 +397,72 @@ impl<'a> Lexer<'a> {
     /// 12.8.3 Numeric Literals
     /// TODO numeric separators
     /// TODO exponential
-    /// TODO float
     fn read_number(&self, bytes: &[u8]) -> LexerReturn {
-        match bytes[0] {
-            b'0' => match bytes[1..] {
-                [b'b' | b'B', _, ..] => self.read_binary(bytes),
-                [b'o' | b'O', _, ..] => self.read_octal(bytes),
-                [b'x' | b'X', _, ..] => self.read_hex(bytes),
-                [b'e' | b'E', n, ..] => {
-                    if n.is_ascii_digit() {
-                        let len = bytes[2..]
-                            .iter()
-                            .take_while(|b| b.is_ascii_hexdigit())
-                            .count();
-                        Some((Kind::Number(Number::Decimal), len + 2))
-                    } else {
-                        None
+        assert!(bytes[0].is_ascii_digit());
+        let mut kind = Number::Decimal;
+        let mut cur = 1;
+        let mut iter = bytes[cur..].iter();
+        while let Some(b) = iter.next() {
+            if b == &b'.' {
+                if kind == Number::Float {
+                    // TODO error
+                    return None;
+                }
+                if let Some(d) = bytes.get(cur + 1) {
+                    if d.is_ascii_digit() {
+                        cur += 2;
+                        kind = Number::Float;
+                        iter.next();
+                        continue;
                     }
                 }
-                [b'n', ..] => Some((Kind::Number(Number::BigInt), 2)),
-                [b'0'..=b'9', ..] => self.read_legacy_octal(bytes),
-                _ => Some((Kind::Number(Number::Decimal), 1)),
-            },
-            n if n.is_ascii_digit() => {
-                let mut len = 1 + bytes[1..].iter().take_while(|b| b.is_ascii_digit()).count();
-                let mut kind = Number::Decimal;
-                if let Some(b) = bytes.get(len) {
-                    if b == &b'n' {
-                        len += 1;
-                        kind = Number::BigInt;
-                    }
-                }
-                Some((Kind::Number(kind), len))
             }
-            _ => None,
+            if !b.is_ascii_digit() {
+                break;
+            }
+            cur += 1;
+        }
+        if let Some(b) = bytes.get(cur) {
+            if b == &b'n' {
+                if kind == Number::Float {
+                    // TODO error
+                    return None;
+                }
+                cur += 1;
+                kind = Number::BigInt;
+            }
+        }
+        Some((Kind::Number(kind), cur))
+    }
+
+    /// 12.8.3 Numeric Literals with `0` prefix
+    fn read_zero(&self, bytes: &[u8]) -> LexerReturn {
+        assert_eq!(bytes[0], b'0');
+        match bytes[1..] {
+            [b'b' | b'B', _, ..] => self.read_binary(bytes),
+            [b'o' | b'O', _, ..] => self.read_octal(bytes),
+            [b'x' | b'X', _, ..] => self.read_hex(bytes),
+            [b'e' | b'E', n, ..] => {
+                if n.is_ascii_digit() {
+                    let len = bytes[2..]
+                        .iter()
+                        .take_while(|b| b.is_ascii_hexdigit())
+                        .count();
+                    Some((Kind::Number(Number::Decimal), len + 2))
+                } else {
+                    None
+                }
+            }
+            [b'.', n, ..] => {
+                if n.is_ascii_digit() {
+                    self.read_number(bytes)
+                } else {
+                    Some((Kind::Number(Number::Float), 2))
+                }
+            }
+            [b'n', ..] => Some((Kind::Number(Number::BigInt), 2)),
+            [b'0'..=b'9', ..] => self.read_legacy_octal(bytes),
+            _ => Some((Kind::Number(Number::Decimal), 1)),
         }
     }
 

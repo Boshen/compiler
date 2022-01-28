@@ -55,12 +55,14 @@ fn punctuator() {
 #[test]
 fn numeric_literal() {
     let input = "
-        0 123
+        0 0n
         0b1 0B12
         0o1 0O12
         0x1 0X12
         0123 0789
-        0n 123n
+        0. 0.0 0.123
+        123n
+        1.0 1.1
     ";
     test_snapshot("numeric_literal", input);
 }

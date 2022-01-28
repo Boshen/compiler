@@ -5,12 +5,14 @@ expression: numeric_literal
 
 ---
 # Input
-0 123
+0 0n
 0b1 0B12
 0o1 0O12
 0x1 0X12
 0123 0789
-0n 123n
+0. 0.0 0.123
+123n
+1.0 1.1
 
 ---
 # Output
@@ -29,141 +31,189 @@ expression: numeric_literal
     },
     Token {
         kind: Number(
-            Decimal,
-        ),
-        offset: 2,
-        len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 5,
-        len: 1,
-    },
-    Token {
-        kind: Number(
-            Binary,
-        ),
-        offset: 6,
-        len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 9,
-        len: 1,
-    },
-    Token {
-        kind: Number(
-            Binary,
-        ),
-        offset: 10,
-        len: 3,
-    },
-    Token {
-        kind: Number(
-            Decimal,
-        ),
-        offset: 13,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 14,
-        len: 1,
-    },
-    Token {
-        kind: Number(
-            Octal,
-        ),
-        offset: 15,
-        len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 18,
-        len: 1,
-    },
-    Token {
-        kind: Number(
-            Octal,
-        ),
-        offset: 19,
-        len: 4,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 23,
-        len: 1,
-    },
-    Token {
-        kind: Number(
-            Hex,
-        ),
-        offset: 24,
-        len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 27,
-        len: 1,
-    },
-    Token {
-        kind: Number(
-            Hex,
-        ),
-        offset: 28,
-        len: 4,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 32,
-        len: 1,
-    },
-    Token {
-        kind: Number(
-            Octal,
-        ),
-        offset: 33,
-        len: 4,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 37,
-        len: 1,
-    },
-    Token {
-        kind: Number(
-            Decimal,
-        ),
-        offset: 38,
-        len: 4,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 42,
-        len: 1,
-    },
-    Token {
-        kind: Number(
             BigInt,
         ),
-        offset: 43,
+        offset: 2,
         len: 2,
     },
     Token {
         kind: WhiteSpace,
+        offset: 4,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Binary,
+        ),
+        offset: 5,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 8,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Binary,
+        ),
+        offset: 9,
+        len: 3,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 12,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 13,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Octal,
+        ),
+        offset: 14,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 17,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Octal,
+        ),
+        offset: 18,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 22,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Hex,
+        ),
+        offset: 23,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 26,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Hex,
+        ),
+        offset: 27,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 31,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Octal,
+        ),
+        offset: 32,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 36,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 37,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 41,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Float,
+        ),
+        offset: 42,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 44,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Float,
+        ),
         offset: 45,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 48,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Float,
+        ),
+        offset: 49,
+        len: 5,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 54,
         len: 1,
     },
     Token {
         kind: Number(
             BigInt,
         ),
-        offset: 46,
+        offset: 55,
         len: 4,
     },
     Token {
+        kind: WhiteSpace,
+        offset: 59,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Float,
+        ),
+        offset: 60,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 63,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Float,
+        ),
+        offset: 64,
+        len: 3,
+    },
+    Token {
         kind: EOF,
-        offset: 50,
+        offset: 67,
         len: 1,
     },
 ]

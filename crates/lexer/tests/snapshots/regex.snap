@@ -12,7 +12,7 @@ expression: regex
 [
     Token {
         kind: Regex,
-        offset: 4,
+        offset: 0,
         len: 4,
     },
     Token {

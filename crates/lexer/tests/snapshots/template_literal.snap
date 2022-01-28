@@ -12,7 +12,7 @@ expression: template_literal
 [
     Token {
         kind: Template,
-        offset: 5,
+        offset: 0,
         len: 5,
     },
     Token {

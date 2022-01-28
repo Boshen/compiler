@@ -3,6 +3,8 @@
 use crate::kind::{Kind, Number};
 use crate::token::Token;
 
+type LexerReturn = Option<(Kind, usize)>;
+
 pub struct Lexer<'a> {
     /// The input string
     bytes: &'a [u8],
@@ -27,7 +29,7 @@ impl Iterator for Lexer<'_> {
         }
 
         let bytes = &self.bytes[self.cur..];
-        let token = self
+        let result = self
             .read_whitespaces(bytes)
             .or_else(|| self.read_line_terminators(bytes))
             .or_else(|| self.read_comment(bytes))
@@ -36,17 +38,21 @@ impl Iterator for Lexer<'_> {
             .or_else(|| self.read_punctuator(bytes))
             .or_else(|| self.read_number(bytes))
             .or_else(|| self.read_string_literal(bytes))
-            .or_else(|| self.read_template_literal(bytes))
-            .or_else(|| Some(Token::new(Kind::Unknown, self.cur, 1)));
+            .or_else(|| self.read_template_literal(bytes));
 
-        if let Some(t) = token.as_ref() {
-            self.cur += t.len();
-        }
+        let token = if let Some((kind, len)) = result {
+            Token::new(kind, self.cur, len)
+        } else {
+            Token::new(Kind::Unknown, self.cur, 1)
+        };
 
-        token
+        self.cur += token.len();
+
+        Some(token)
     }
 }
 
+#[allow(clippy::unused_self)]
 impl<'a> Lexer<'a> {
     #[must_use]
     pub const fn new(source: &'a str) -> Self {
@@ -59,16 +65,16 @@ impl<'a> Lexer<'a> {
 
     /// Section 12.2 Whitespace
     /// TODO read all whitespace codepoints
-    fn read_whitespaces(&self, bytes: &[u8]) -> Option<Token> {
+    fn read_whitespaces(&self, bytes: &[u8]) -> LexerReturn {
         let len = bytes.iter().take_while(|b| b.is_ascii_whitespace()).count();
         if len == 0 {
             return None;
         }
-        Some(Token::new(Kind::WhiteSpace, self.cur, len))
+        Some((Kind::WhiteSpace, len))
     }
 
     /// Section 12.3 Line Terminators
-    fn read_line_terminators(&self, bytes: &[u8]) -> Option<Token> {
+    fn read_line_terminators(&self, bytes: &[u8]) -> LexerReturn {
         let mut cur = 0;
         while let Some(bytes) = bytes.get(cur..) {
             if let Some(len) = Lexer::read_line_terminator(bytes) {
@@ -80,11 +86,11 @@ impl<'a> Lexer<'a> {
         if cur == 0 {
             return None;
         }
-        Some(Token::new(Kind::LineTerminator, self.cur, cur))
+        Some((Kind::LineTerminator, cur))
     }
 
     /// Section 12.4 Comments
-    fn read_comment(&self, bytes: &[u8]) -> Option<Token> {
+    fn read_comment(&self, bytes: &[u8]) -> LexerReturn {
         if bytes.starts_with(&[b'/', b'/']) {
             let mut cur = 2;
             while let Some(bytes) = bytes.get(cur..) {
@@ -94,7 +100,7 @@ impl<'a> Lexer<'a> {
                 }
                 cur += 1;
             }
-            return Some(Token::new(Kind::Comment, self.cur, cur));
+            return Some((Kind::Comment, cur));
         }
         if bytes.starts_with(&[b'/', b'*']) {
             let mut cur = 2;
@@ -105,14 +111,14 @@ impl<'a> Lexer<'a> {
                 }
                 cur += 1;
             }
-            return Some(Token::new(Kind::MultilineComment, self.cur, cur));
+            return Some((Kind::MultilineComment, cur));
         }
         // TODO Error
         None
     }
 
     /// Section 12.6 Names and Keywords
-    fn read_name_or_keyword(&self, bytes: &[u8]) -> Option<Token> {
+    fn read_name_or_keyword(&self, bytes: &[u8]) -> LexerReturn {
         // let start = self.cur;
         let mut cur = 0;
         while let Some(bytes) = bytes.get(cur..) {
@@ -126,12 +132,12 @@ impl<'a> Lexer<'a> {
             return None;
         }
         let kind = Lexer::read_keyword(&bytes[..cur]);
-        Some(Token::new(kind, self.cur, cur))
+        Some((kind, cur))
     }
 
     /// Section 12.7 Punctuators
     #[allow(clippy::cognitive_complexity, clippy::too_many_lines)]
-    fn read_punctuator(&self, bytes: &[u8]) -> Option<Token> {
+    fn read_punctuator(&self, bytes: &[u8]) -> LexerReturn {
         let mut cur = 0;
         let kind = match bytes[cur] {
             b'{' => Kind::LCurly,
@@ -321,7 +327,7 @@ impl<'a> Lexer<'a> {
             b':' => Kind::Colon,
             _ => return None,
         };
-        Some(Token::new(kind, self.cur, cur + 1))
+        Some((kind, cur + 1))
     }
 
     /// Section 12.6 Identifiers
@@ -384,9 +390,8 @@ impl<'a> Lexer<'a> {
     /// 12.8.3 Numeric Literals
     /// TODO numeric separators
     /// TODO exponential
-    /// TODO sign
     /// TODO float
-    fn read_number(&self, bytes: &[u8]) -> Option<Token> {
+    fn read_number(&self, bytes: &[u8]) -> LexerReturn {
         match bytes[0] {
             b'0' => {
                 match bytes[1..] {
@@ -396,7 +401,7 @@ impl<'a> Lexer<'a> {
                                 .iter()
                                 .take_while(|b| matches!(b, b'0'..=b'1'))
                                 .count();
-                            Some(Token::new(Kind::Number(Number::Binary), self.cur, len + 2))
+                            Some((Kind::Number(Number::Binary), len + 2))
                         } else {
                             None
                         }
@@ -407,7 +412,7 @@ impl<'a> Lexer<'a> {
                                 .iter()
                                 .take_while(|b| matches!(b, b'0'..=b'7'))
                                 .count();
-                            Some(Token::new(Kind::Number(Number::Octal), self.cur, len + 2))
+                            Some((Kind::Number(Number::Octal), len + 2))
                         } else {
                             None
                         }
@@ -418,7 +423,7 @@ impl<'a> Lexer<'a> {
                                 .iter()
                                 .take_while(|b| b.is_ascii_hexdigit())
                                 .count();
-                            Some(Token::new(Kind::Number(Number::Hex), self.cur, len + 2))
+                            Some((Kind::Number(Number::Hex), len + 2))
                         } else {
                             None
                         }
@@ -429,7 +434,7 @@ impl<'a> Lexer<'a> {
                                 .iter()
                                 .take_while(|b| b.is_ascii_hexdigit())
                                 .count();
-                            Some(Token::new(Kind::Number(Number::Decimal), self.cur, len + 2))
+                            Some((Kind::Number(Number::Decimal), len + 2))
                         } else {
                             None
                         }
@@ -447,9 +452,9 @@ impl<'a> Lexer<'a> {
                                     b.is_ascii_digit()
                                 })
                                 .count();
-                            Some(Token::new(Kind::Number(kind), self.cur, len + 1))
+                            Some((Kind::Number(kind), len + 1))
                         } else if n == b'n' {
-                            Some(Token::new(Kind::Number(Number::BigInt), self.cur, 2))
+                            Some((Kind::Number(Number::BigInt), 2))
                         } else {
                             None
                         }
@@ -466,29 +471,29 @@ impl<'a> Lexer<'a> {
                         kind = Number::BigInt;
                     }
                 }
-                Some(Token::new(Kind::Number(kind), self.cur, len))
+                Some((Kind::Number(kind), len))
             }
             _ => None,
         }
     }
 
-    // 12.8.4 String Literals
-    fn read_string_literal(&self, bytes: &[u8]) -> Option<Token> {
+    /// 12.8.4 String Literals
+    fn read_string_literal(&self, bytes: &[u8]) -> LexerReturn {
         match bytes[0] {
             b'\'' => {
                 let len = bytes[1..].iter().take_while(|b| b != &&b'\'').count();
-                Some(Token::new(Kind::Str, self.cur, len + 2))
+                Some((Kind::Str, len + 2))
             }
             b'"' => {
                 let len = bytes[1..].iter().take_while(|b| b != &&b'"').count();
-                Some(Token::new(Kind::Str, self.cur, len + 2))
+                Some((Kind::Str, len + 2))
             }
             _ => None,
         }
     }
 
     /// 12.8.5 Regular Expression Literals
-    fn read_regex(&self, bytes: &[u8]) -> Option<Token> {
+    fn read_regex(&self, bytes: &[u8]) -> LexerReturn {
         match bytes[0] {
             // TODO combine this check with comment slash and single slash
             b'/' => {
@@ -498,18 +503,18 @@ impl<'a> Lexer<'a> {
                     }
                 }
                 let len = bytes[1..].iter().take_while(|b| b != &&b'/').count();
-                Some(Token::new(Kind::Regex, self.cur, len + 2))
+                Some((Kind::Regex, len + 2))
             }
             _ => None,
         }
     }
 
     /// 12.8.6 Template Literal Lexical Components
-    fn read_template_literal(&self, bytes: &[u8]) -> Option<Token> {
+    fn read_template_literal(&self, bytes: &[u8]) -> LexerReturn {
         match bytes[0] {
             b'`' => {
                 let len = bytes[1..].iter().take_while(|b| b != &&b'`').count();
-                Some(Token::new(Kind::Template, self.cur, len + 2))
+                Some((Kind::Template, len + 2))
             }
             _ => None,
         }

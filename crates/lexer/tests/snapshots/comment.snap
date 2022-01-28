@@ -13,12 +13,12 @@ expression: comment
 [
     Token {
         kind: Comment,
-        offset: 11,
+        offset: 0,
         len: 11,
     },
     Token {
         kind: MultilineComment,
-        offset: 34,
+        offset: 11,
         len: 23,
     },
     Token {

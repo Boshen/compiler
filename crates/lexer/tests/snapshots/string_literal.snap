@@ -12,17 +12,17 @@ expression: string_literal
 [
     Token {
         kind: Str,
-        offset: 7,
+        offset: 0,
         len: 7,
     },
     Token {
         kind: WhiteSpace,
-        offset: 8,
+        offset: 7,
         len: 1,
     },
     Token {
         kind: Str,
-        offset: 15,
+        offset: 8,
         len: 7,
     },
     Token {

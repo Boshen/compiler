@@ -29,6 +29,7 @@ impl Iterator for Lexer<'_> {
         }
 
         let bytes = &self.bytes[self.cur..];
+
         let result = self
             .read_whitespaces(bytes)
             .or_else(|| self.read_line_terminators(bytes))
@@ -77,7 +78,7 @@ impl<'a> Lexer<'a> {
     fn read_line_terminators(&self, bytes: &[u8]) -> LexerReturn {
         let mut cur = 0;
         while let Some(bytes) = bytes.get(cur..) {
-            if let Some(len) = Lexer::read_line_terminator(bytes) {
+            if let Some(len) = self.read_line_terminator(bytes) {
                 cur += len;
             } else {
                 break;
@@ -94,7 +95,7 @@ impl<'a> Lexer<'a> {
         if bytes.starts_with(&[b'/', b'/']) {
             let mut cur = 2;
             while let Some(bytes) = bytes.get(cur..) {
-                if let Some(len) = Lexer::read_line_terminator(bytes) {
+                if let Some(len) = self.read_line_terminator(bytes) {
                     cur += len;
                     break;
                 }
@@ -532,7 +533,6 @@ impl<'a> Lexer<'a> {
                 let mut iter = bytes[cur..].iter();
                 while let Some(b) = iter.next() {
                     if b == &b'\\' && bytes.get(cur + 1) == Some(&b'/') {
-                        dbg!("in");
                         cur += 2;
                         iter.next();
                     } else if b == &b'/' {
@@ -562,11 +562,14 @@ impl<'a> Lexer<'a> {
     fn read_escape_sequence(&self, bytes: &[u8]) -> Option<usize> {
         assert_eq!(bytes[0], b'\\');
         if let Some(b) = bytes.get(1) {
+            if let Some(len) = self.read_line_terminator(&bytes[1..]) {
+                return Some(len);
+            }
             return match b {
                 b'\\' | b'n' | b'r' | b't' | b'b' | b'v' | b'f' | b'\'' | b'"' => Some(2),
                 b'u' => Some(5),
                 b'x' => Some(3),
-                _ => None,
+                _ => self.read_unicode_char(&bytes[1..]),
             };
         }
         None
@@ -575,7 +578,7 @@ impl<'a> Lexer<'a> {
     /* ---------- utils ---------- */
 
     /// Read line terminator and return its length
-    fn read_line_terminator(bytes: &[u8]) -> Option<usize> {
+    fn read_line_terminator(&self, bytes: &[u8]) -> Option<usize> {
         match *bytes {
             [b'\n', ..] => Some('\n'.len_utf8()),
             [b'\r', ..] => Some('\r'.len_utf8()),
@@ -590,5 +593,13 @@ impl<'a> Lexer<'a> {
             }
         }
         //
+    }
+
+    /// Read the next unicode character by converting it to string
+    fn read_unicode_char(&self, bytes: &[u8]) -> Option<usize> {
+        std::str::from_utf8(bytes)
+            .ok()
+            .and_then(|str| str.chars().next())
+            .map(|c| c.len_utf8())
     }
 }

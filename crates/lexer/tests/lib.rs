@@ -72,6 +72,9 @@ fn string_literal() {
         '\\\n\r\t\b\v\f\'\"'
         '\\\n\r\t\b\v\f\'\"'
         '\u1234' '\x12'
+        'foo \
+        '
+        "\d"
     "#;
     test_snapshot("string_literal", input);
 }

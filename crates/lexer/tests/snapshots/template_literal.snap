@@ -1,7 +1,7 @@
 ---
 source: crates/lexer/tests/lib.rs
 assertion_line: 13
-expression: template_literals
+expression: template_literal
 
 ---
 # Input
@@ -12,7 +12,7 @@ expression: template_literals
 [
     Token {
         kind: Template,
-        offset: 0,
+        offset: 5,
         len: 5,
     },
     Token {

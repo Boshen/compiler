@@ -1,7 +1,7 @@
 ---
 source: crates/lexer/tests/lib.rs
 assertion_line: 13
-expression: string_literals
+expression: string_literal
 
 ---
 # Input
@@ -12,17 +12,17 @@ expression: string_literals
 [
     Token {
         kind: Str,
-        offset: 0,
+        offset: 7,
         len: 7,
     },
     Token {
         kind: WhiteSpace,
-        offset: 7,
+        offset: 8,
         len: 1,
     },
     Token {
         kind: Str,
-        offset: 8,
+        offset: 15,
         len: 7,
     },
     Token {

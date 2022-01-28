@@ -1,0 +1,29 @@
+---
+source: crates/lexer/tests/lib.rs
+assertion_line: 13
+expression: comment
+
+---
+# Input
+// comment
+/* multiline comment */
+
+---
+# Output
+[
+    Token {
+        kind: Comment,
+        offset: 11,
+        len: 11,
+    },
+    Token {
+        kind: MultilineComment,
+        offset: 34,
+        len: 23,
+    },
+    Token {
+        kind: EOF,
+        offset: 34,
+        len: 1,
+    },
+]

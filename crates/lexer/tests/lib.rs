@@ -15,23 +15,44 @@ fn test_snapshot(name: &str, input: &str) {
 }
 
 #[test]
-fn identifiers() {
+fn comment() {
     let input = "
         // comment
         /* multiline comment */
+    ";
+    test_snapshot("comment", input);
+}
+
+#[test]
+fn keyword() {
+    let input = "
         await break case catch class const continue debugger default delete do else enum export extends
         false finally for function if import in instanceof new null return super switch this throw true try typeof var void while with yield
         undefined
+    ";
+    test_snapshot("keyword", input);
+}
+
+#[test]
+fn identifier() {
+    let input = "
         $ _ $a _a abc_$
+    ";
+    test_snapshot("identifier", input);
+}
+
+#[test]
+fn punctuator() {
+    let input = "
         { ( ) [ ] . ... ; , < > <= >= == != === !== + - * % ** ++ -- << >> >>> & | ^ ! ~ && || ?? ? : = +=
         -= *= %= **= <<= >>= >>>= &= |= ^= &&= ||= ??= =>
         ?. / /= }
     ";
-    test_snapshot("identifiers", input);
+    test_snapshot("punctuator", input);
 }
 
 #[test]
-fn numeric_literals() {
+fn numeric_literal() {
     let input = "
         0 123
         0b1 0B12
@@ -40,15 +61,15 @@ fn numeric_literals() {
         0123 0789
         0n 123n
     ";
-    test_snapshot("numeric_literals", input);
+    test_snapshot("numeric_literal", input);
 }
 
 #[test]
-fn string_literals() {
+fn string_literal() {
     let input = r#"
         "12345" '12345'
     "#;
-    test_snapshot("string_literals", input);
+    test_snapshot("string_literal", input);
 }
 
 #[test]
@@ -64,5 +85,5 @@ fn template_literal() {
     let input = r#"
 `123`
     "#;
-    test_snapshot("template_literals", input);
+    test_snapshot("template_literal", input);
 }

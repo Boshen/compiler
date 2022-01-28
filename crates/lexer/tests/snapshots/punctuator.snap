@@ -1,0 +1,585 @@
+---
+source: crates/lexer/tests/lib.rs
+assertion_line: 13
+expression: punctuator
+
+---
+# Input
+{ ( ) [ ] . ... ; , < > <= >= == != === !== + - * % ** ++ -- << >> >>> & | ^ ! ~ && || ?? ? : = +=
+-= *= %= **= <<= >>= >>>= &= |= ^= &&= ||= ??= =>
+?. / /= }
+
+---
+# Output
+[
+    Token {
+        kind: LCurly,
+        offset: 1,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 2,
+        len: 1,
+    },
+    Token {
+        kind: LParen,
+        offset: 3,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 4,
+        len: 1,
+    },
+    Token {
+        kind: RParen,
+        offset: 5,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 6,
+        len: 1,
+    },
+    Token {
+        kind: LBrack,
+        offset: 7,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 8,
+        len: 1,
+    },
+    Token {
+        kind: RBrack,
+        offset: 9,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 10,
+        len: 1,
+    },
+    Token {
+        kind: Dot,
+        offset: 11,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 12,
+        len: 1,
+    },
+    Token {
+        kind: Dot3,
+        offset: 15,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 16,
+        len: 1,
+    },
+    Token {
+        kind: Semicolon,
+        offset: 17,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 18,
+        len: 1,
+    },
+    Token {
+        kind: Comma,
+        offset: 19,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 20,
+        len: 1,
+    },
+    Token {
+        kind: LAngle,
+        offset: 21,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 22,
+        len: 1,
+    },
+    Token {
+        kind: RAngle,
+        offset: 23,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 24,
+        len: 1,
+    },
+    Token {
+        kind: LtEq,
+        offset: 26,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 27,
+        len: 1,
+    },
+    Token {
+        kind: GtEq,
+        offset: 29,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 30,
+        len: 1,
+    },
+    Token {
+        kind: Eq2,
+        offset: 32,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 33,
+        len: 1,
+    },
+    Token {
+        kind: Neq,
+        offset: 35,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 36,
+        len: 1,
+    },
+    Token {
+        kind: Eq3,
+        offset: 39,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 40,
+        len: 1,
+    },
+    Token {
+        kind: Neq2,
+        offset: 43,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 44,
+        len: 1,
+    },
+    Token {
+        kind: Plus,
+        offset: 45,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 46,
+        len: 1,
+    },
+    Token {
+        kind: Minus,
+        offset: 47,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 48,
+        len: 1,
+    },
+    Token {
+        kind: Star,
+        offset: 49,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 50,
+        len: 1,
+    },
+    Token {
+        kind: Percent,
+        offset: 51,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 52,
+        len: 1,
+    },
+    Token {
+        kind: Star2,
+        offset: 54,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 55,
+        len: 1,
+    },
+    Token {
+        kind: Plus2,
+        offset: 57,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 58,
+        len: 1,
+    },
+    Token {
+        kind: Minus2,
+        offset: 60,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 61,
+        len: 1,
+    },
+    Token {
+        kind: ShiftLeft,
+        offset: 63,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 64,
+        len: 1,
+    },
+    Token {
+        kind: ShiftRight,
+        offset: 66,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 67,
+        len: 1,
+    },
+    Token {
+        kind: ShiftRight3,
+        offset: 70,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 71,
+        len: 1,
+    },
+    Token {
+        kind: Amp,
+        offset: 72,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 73,
+        len: 1,
+    },
+    Token {
+        kind: Pipe,
+        offset: 74,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 75,
+        len: 1,
+    },
+    Token {
+        kind: Caret,
+        offset: 76,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 77,
+        len: 1,
+    },
+    Token {
+        kind: Bang,
+        offset: 78,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 79,
+        len: 1,
+    },
+    Token {
+        kind: Tilde,
+        offset: 80,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 81,
+        len: 1,
+    },
+    Token {
+        kind: Amp2,
+        offset: 83,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 84,
+        len: 1,
+    },
+    Token {
+        kind: Pipe2,
+        offset: 86,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 87,
+        len: 1,
+    },
+    Token {
+        kind: Question2,
+        offset: 89,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 90,
+        len: 1,
+    },
+    Token {
+        kind: Question,
+        offset: 91,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 92,
+        len: 1,
+    },
+    Token {
+        kind: Colon,
+        offset: 93,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 94,
+        len: 1,
+    },
+    Token {
+        kind: Eq,
+        offset: 95,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 96,
+        len: 1,
+    },
+    Token {
+        kind: PlusEq,
+        offset: 98,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 99,
+        len: 1,
+    },
+    Token {
+        kind: MinusEq,
+        offset: 101,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 102,
+        len: 1,
+    },
+    Token {
+        kind: StarEq,
+        offset: 104,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 105,
+        len: 1,
+    },
+    Token {
+        kind: PercentEq,
+        offset: 107,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 108,
+        len: 1,
+    },
+    Token {
+        kind: Star2Eq,
+        offset: 111,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 112,
+        len: 1,
+    },
+    Token {
+        kind: ShiftLeftEq,
+        offset: 115,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 116,
+        len: 1,
+    },
+    Token {
+        kind: ShiftRightEq,
+        offset: 119,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 120,
+        len: 1,
+    },
+    Token {
+        kind: ShiftRight3Eq,
+        offset: 124,
+        len: 4,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 125,
+        len: 1,
+    },
+    Token {
+        kind: AmpEq,
+        offset: 127,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 128,
+        len: 1,
+    },
+    Token {
+        kind: PipeEq,
+        offset: 130,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 131,
+        len: 1,
+    },
+    Token {
+        kind: CaretEq,
+        offset: 133,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 134,
+        len: 1,
+    },
+    Token {
+        kind: Amp2Eq,
+        offset: 137,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 138,
+        len: 1,
+    },
+    Token {
+        kind: Pipe2Eq,
+        offset: 141,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 142,
+        len: 1,
+    },
+    Token {
+        kind: Question2Eq,
+        offset: 145,
+        len: 3,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 146,
+        len: 1,
+    },
+    Token {
+        kind: FatArrow,
+        offset: 148,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 149,
+        len: 1,
+    },
+    Token {
+        kind: Question,
+        offset: 150,
+        len: 1,
+    },
+    Token {
+        kind: Dot,
+        offset: 151,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 152,
+        len: 1,
+    },
+    Token {
+        kind: Regex,
+        offset: 155,
+        len: 3,
+    },
+    Token {
+        kind: Eq,
+        offset: 156,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 157,
+        len: 1,
+    },
+    Token {
+        kind: RCurly,
+        offset: 158,
+        len: 1,
+    },
+    Token {
+        kind: EOF,
+        offset: 158,
+        len: 1,
+    },
+]

@@ -16,7 +16,9 @@ expression: numeric_literal
 # Output
 [
     Token {
-        kind: Unknown,
+        kind: Number(
+            Decimal,
+        ),
         offset: 0,
         len: 1,
     },

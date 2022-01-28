@@ -393,75 +393,25 @@ impl<'a> Lexer<'a> {
     /// TODO float
     fn read_number(&self, bytes: &[u8]) -> LexerReturn {
         match bytes[0] {
-            b'0' => {
-                match bytes[1..] {
-                    [b'b' | b'B', n, ..] => {
-                        if matches!(n, b'0'..=b'1') {
-                            let len = bytes[2..]
-                                .iter()
-                                .take_while(|b| matches!(b, b'0'..=b'1'))
-                                .count();
-                            Some((Kind::Number(Number::Binary), len + 2))
-                        } else {
-                            None
-                        }
+            b'0' => match bytes[1..] {
+                [b'b' | b'B', _, ..] => self.read_binary(bytes),
+                [b'o' | b'O', _, ..] => self.read_octal(bytes),
+                [b'x' | b'X', _, ..] => self.read_hex(bytes),
+                [b'e' | b'E', n, ..] => {
+                    if n.is_ascii_digit() {
+                        let len = bytes[2..]
+                            .iter()
+                            .take_while(|b| b.is_ascii_hexdigit())
+                            .count();
+                        Some((Kind::Number(Number::Decimal), len + 2))
+                    } else {
+                        None
                     }
-                    [b'o' | b'O', n, ..] => {
-                        if matches!(n, b'0'..=b'7') {
-                            let len = bytes[2..]
-                                .iter()
-                                .take_while(|b| matches!(b, b'0'..=b'7'))
-                                .count();
-                            Some((Kind::Number(Number::Octal), len + 2))
-                        } else {
-                            None
-                        }
-                    }
-                    [b'x' | b'X', n, ..] => {
-                        if n.is_ascii_hexdigit() {
-                            let len = bytes[2..]
-                                .iter()
-                                .take_while(|b| b.is_ascii_hexdigit())
-                                .count();
-                            Some((Kind::Number(Number::Hex), len + 2))
-                        } else {
-                            None
-                        }
-                    }
-                    [b'e' | b'E', n, ..] => {
-                        if n.is_ascii_digit() {
-                            let len = bytes[2..]
-                                .iter()
-                                .take_while(|b| b.is_ascii_hexdigit())
-                                .count();
-                            Some((Kind::Number(Number::Decimal), len + 2))
-                        } else {
-                            None
-                        }
-                    }
-                    [n, ..] => {
-                        // legacy octal
-                        if n.is_ascii_digit() {
-                            let mut kind = Number::Octal;
-                            let len = bytes[1..]
-                                .iter()
-                                .take_while(|b| {
-                                    if matches!(b, b'8'..=b'9') {
-                                        kind = Number::Decimal;
-                                    }
-                                    b.is_ascii_digit()
-                                })
-                                .count();
-                            Some((Kind::Number(kind), len + 1))
-                        } else if n == b'n' {
-                            Some((Kind::Number(Number::BigInt), 2))
-                        } else {
-                            None
-                        }
-                    }
-                    _ => None,
                 }
-            }
+                [b'n', ..] => Some((Kind::Number(Number::BigInt), 2)),
+                [b'0'..=b'9', ..] => self.read_legacy_octal(bytes),
+                _ => Some((Kind::Number(Number::Decimal), 1)),
+            },
             n if n.is_ascii_digit() => {
                 let mut len = 1 + bytes[1..].iter().take_while(|b| b.is_ascii_digit()).count();
                 let mut kind = Number::Decimal;
@@ -474,6 +424,68 @@ impl<'a> Lexer<'a> {
                 Some((Kind::Number(kind), len))
             }
             _ => None,
+        }
+    }
+
+    fn read_binary(&self, bytes: &[u8]) -> LexerReturn {
+        assert_eq!(bytes[0], b'0');
+        assert!(matches!(bytes[1], b'b' | b'B'));
+        let len = bytes[2..]
+            .iter()
+            .take_while(|b| matches!(b, b'0'..=b'1'))
+            .count();
+        if len == 0 {
+            None
+        } else {
+            Some((Kind::Number(Number::Binary), len + 2))
+        }
+    }
+
+    fn read_octal(&self, bytes: &[u8]) -> LexerReturn {
+        assert_eq!(bytes[0], b'0');
+        assert!(matches!(bytes[1], b'o' | b'O'));
+        let len = bytes[2..]
+            .iter()
+            .take_while(|b| matches!(b, b'0'..=b'7'))
+            .count();
+        if len == 0 {
+            None
+        } else {
+            Some((Kind::Number(Number::Octal), len + 2))
+        }
+    }
+
+    fn read_legacy_octal(&self, bytes: &[u8]) -> LexerReturn {
+        assert_eq!(bytes[0], b'0');
+        assert!(matches!(bytes[1], b'0'..=b'9'));
+        let mut kind = Number::Octal;
+        let len = bytes[1..]
+            .iter()
+            .take_while(|b| {
+                if matches!(b, b'8'..=b'9') {
+                    kind = Number::Decimal;
+                }
+                b.is_ascii_digit()
+            })
+            .count();
+        if len == 0 {
+            None
+        } else {
+            Some((Kind::Number(kind), len + 1))
+        }
+    }
+
+    fn read_hex(&self, bytes: &[u8]) -> LexerReturn {
+        assert_eq!(bytes[0], b'0');
+        assert!(matches!(bytes[1], b'x' | b'X'));
+        let len = bytes[2..]
+            .iter()
+            .take_while(|b| b.is_ascii_hexdigit())
+            .count();
+        if len == 0 {
+            None
+        } else {
+            Some((Kind::Number(Number::Hex), len + 2))
         }
     }
 

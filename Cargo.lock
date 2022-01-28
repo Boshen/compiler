@@ -161,6 +161,7 @@ name = "lexer"
 version = "0.0.0"
 dependencies = [
  "insta",
+ "unicode-xid",
  "unindent",
 ]
 

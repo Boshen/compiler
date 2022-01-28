@@ -35,9 +35,11 @@ fn keyword() {
 
 #[test]
 fn identifier() {
-    let input = "
+    let input = r#"
         $ _ $a _a abc_$
-    ";
+        \u03bc
+        \u{61}
+    "#;
     test_snapshot("identifier", input);
 }
 

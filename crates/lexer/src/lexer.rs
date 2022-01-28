@@ -1,5 +1,7 @@
 //! Lexer
 
+use unicode_xid::UnicodeXID;
+
 use crate::constants::UNICODE_SPACES;
 use crate::kind::{Kind, Number};
 use crate::state::State;
@@ -136,22 +138,80 @@ impl<'a> Lexer<'a> {
         Some((Kind::MultilineComment, cur))
     }
 
-    /// Section 12.6 Names and Keywords
+    /// Section 12.6.1 Identifier Names
     fn read_name_or_keyword(&self, bytes: &[u8]) -> LexerReturn {
-        // let start = self.cur;
-        let mut cur = 0;
-        while let Some(bytes) = bytes.get(cur..) {
-            if let Some(len) = Lexer::read_identifier(bytes) {
-                cur += len;
+        let mut iter = std::str::from_utf8(bytes).unwrap().chars();
+        if let Some(chr) = iter.next() {
+            let mut len = 0;
+            if chr == '\\' && bytes.get(len + 1) == Some(&b'u') {
+                if let Some(size) = self.read_unicode_escape_sequence(bytes) {
+                    len += size;
+                    iter.next();
+                    iter.next();
+                    iter.next();
+                    iter.next();
+                    iter.next();
+                } else {
+                    return None;
+                }
+            } else if chr == '_' || chr == '$' || chr.is_xid_start() {
+                len += chr.len_utf8();
             } else {
-                break;
+                return None;
+            }
+            while let Some(chr) = iter.next() {
+                if chr == '\\' && bytes.get(len + 1) == Some(&b'u') {
+                    if let Some(size) = self.read_unicode_escape_sequence(&bytes[len..]) {
+                        len += size;
+                        iter.next();
+                        iter.next();
+                        iter.next();
+                        iter.next();
+                        iter.next();
+                    } else {
+                        return None;
+                    }
+                } else if chr == '$' || chr.is_xid_continue() {
+                    len += chr.len_utf8();
+                } else {
+                    break;
+                }
+            }
+            let kind = self.read_keyword(&bytes[..len]);
+            return Some((kind, len));
+        }
+        None
+    }
+
+    /// Section 12.8.4 Read `UnicodeEscapeSequence`
+    /// \u followed by 4 hex
+    /// \u{digit} with 1..=6
+    /// TODO reference
+    fn read_unicode_escape_sequence(&self, bytes: &[u8]) -> Option<usize> {
+        assert_eq!(bytes[0], b'\\');
+        assert_eq!(bytes[1], b'u');
+        if bytes.get(2) == Some(&b'{') {
+            let mut len = 0;
+            while len < 6 {
+                if let Some(b) = bytes.get(len + 3) {
+                    if b.is_ascii_hexdigit() {
+                        len += 1;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            return if bytes.get(len + 3) == Some(&b'}') {
+                Some(len + 4)
+            } else {
+                None
+            };
+        } else if let Some(bytes) = bytes.get(2..6) {
+            if bytes.iter().all(u8::is_ascii_hexdigit) {
+                return Some(6);
             }
         }
-        if cur == 0 {
-            return None;
-        }
-        let kind = Lexer::read_keyword(&bytes[..cur]);
-        Some((kind, cur))
+        None
     }
 
     /// Section 12.7 Punctuators
@@ -343,20 +403,8 @@ impl<'a> Lexer<'a> {
         Some((kind, cur + 1))
     }
 
-    /// Section 12.6 Identifiers
-    /// read a single identifier and return its length
-    // TODO read Unicode
-    const fn read_identifier(bytes: &[u8]) -> Option<usize> {
-        if let Some(b) = bytes.first() {
-            if b.is_ascii_alphabetic() || matches!(b, b'_' | b'$') {
-                return Some(1);
-            }
-        }
-        None
-    }
-
     /// Section 12.6.2 Keywords and Reserved Words
-    const fn read_keyword(bytes: &[u8]) -> Kind {
+    const fn read_keyword(&self, bytes: &[u8]) -> Kind {
         match bytes {
             b"await" => Kind::Await,
             b"break" => Kind::Break,

@@ -6,6 +6,8 @@ expression: identifier
 ---
 # Input
 $ _ $a _a abc_$
+\u03bc
+\u{61}
 
 ---
 # Output
@@ -56,8 +58,28 @@ $ _ $a _a abc_$
         len: 5,
     },
     Token {
-        kind: EOF,
+        kind: WhiteSpace,
         offset: 15,
+        len: 1,
+    },
+    Token {
+        kind: Ident,
+        offset: 16,
+        len: 6,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 22,
+        len: 1,
+    },
+    Token {
+        kind: Ident,
+        offset: 23,
+        len: 6,
+    },
+    Token {
+        kind: EOF,
+        offset: 29,
         len: 1,
     },
 ]

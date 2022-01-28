@@ -68,6 +68,10 @@ fn numeric_literal() {
 fn string_literal() {
     let input = r#"
         "12345" '12345'
+        "" ''
+        '\\\n\r\t\b\v\f\'\"'
+        '\\\n\r\t\b\v\f\'\"'
+        '\u1234' '\x12'
     "#;
     test_snapshot("string_literal", input);
 }
@@ -76,6 +80,7 @@ fn string_literal() {
 fn regex() {
     let input = r#"
         /aa/
+        /[0-9A-Za-z_\$(|)\[\]\/\\^]/
     "#;
     test_snapshot("regex", input);
 }

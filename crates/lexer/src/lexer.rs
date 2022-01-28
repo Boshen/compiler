@@ -33,8 +33,8 @@ impl Iterator for Lexer<'_> {
             .read_whitespaces(bytes)
             .or_else(|| self.read_line_terminators(bytes))
             .or_else(|| self.read_comment(bytes))
-            .or_else(|| self.read_regex(bytes))
             .or_else(|| self.read_name_or_keyword(bytes))
+            .or_else(|| self.read_regex(bytes))
             .or_else(|| self.read_punctuator(bytes))
             .or_else(|| self.read_number(bytes))
             .or_else(|| self.read_string_literal(bytes))
@@ -315,6 +315,7 @@ impl<'a> Lexer<'a> {
                     cur += 1;
                     Kind::SlashEq
                 }
+                // TODO fix regex here
                 _ => Kind::Slash,
             },
             b'%' => match bytes[1..] {
@@ -492,13 +493,28 @@ impl<'a> Lexer<'a> {
     /// 12.8.4 String Literals
     fn read_string_literal(&self, bytes: &[u8]) -> LexerReturn {
         match bytes[0] {
-            b'\'' => {
-                let len = bytes[1..].iter().take_while(|b| b != &&b'\'').count();
-                Some((Kind::Str, len + 2))
-            }
-            b'"' => {
-                let len = bytes[1..].iter().take_while(|b| b != &&b'"').count();
-                Some((Kind::Str, len + 2))
+            quote @ (b'\'' | b'"') => {
+                let mut cur = 1;
+                let mut iter = bytes[cur..].iter();
+                while let Some(b) = iter.next() {
+                    if b == &b'\\' {
+                        if let Some(size) = self.read_escape_sequence(&bytes[cur..]) {
+                            cur += size;
+                            (0..size - 1).for_each(|_| {
+                                iter.next();
+                            });
+                        } else {
+                            // TODO error
+                            return None;
+                        }
+                    } else if b == &quote {
+                        return Some((Kind::Str, cur + 1));
+                    } else {
+                        cur += 1;
+                    }
+                }
+                // TODO error
+                None
             }
             _ => None,
         }
@@ -509,13 +525,24 @@ impl<'a> Lexer<'a> {
         match bytes[0] {
             // TODO combine this check with comment slash and single slash
             b'/' => {
-                if let Some(b) = bytes.get(1) {
-                    if b == &b'/' {
-                        return None;
+                if bytes.get(1) == Some(&b'/') {
+                    return None;
+                }
+                let mut cur = 1;
+                let mut iter = bytes[cur..].iter();
+                while let Some(b) = iter.next() {
+                    if b == &b'\\' && bytes.get(cur + 1) == Some(&b'/') {
+                        dbg!("in");
+                        cur += 2;
+                        iter.next();
+                    } else if b == &b'/' {
+                        return Some((Kind::Regex, cur + 1));
+                    } else {
+                        cur += 1;
                     }
                 }
-                let len = bytes[1..].iter().take_while(|b| b != &&b'/').count();
-                Some((Kind::Regex, len + 2))
+                // TODO error
+                None
             }
             _ => None,
         }
@@ -530,6 +557,19 @@ impl<'a> Lexer<'a> {
             }
             _ => None,
         }
+    }
+
+    fn read_escape_sequence(&self, bytes: &[u8]) -> Option<usize> {
+        assert_eq!(bytes[0], b'\\');
+        if let Some(b) = bytes.get(1) {
+            return match b {
+                b'\\' | b'n' | b'r' | b't' | b'b' | b'v' | b'f' | b'\'' | b'"' => Some(2),
+                b'u' => Some(5),
+                b'x' => Some(3),
+                _ => None,
+            };
+        }
+        None
     }
 
     /* ---------- utils ---------- */

@@ -6,6 +6,10 @@ expression: string_literal
 ---
 # Input
 "12345" '12345'
+"" ''
+'\\\n\r\t\b\v\f\'\"'
+'\\\n\r\t\b\v\f\'\"'
+'\u1234' '\x12'
 
 ---
 # Output
@@ -26,8 +30,68 @@ expression: string_literal
         len: 7,
     },
     Token {
-        kind: EOF,
+        kind: WhiteSpace,
         offset: 15,
+        len: 1,
+    },
+    Token {
+        kind: Str,
+        offset: 16,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 18,
+        len: 1,
+    },
+    Token {
+        kind: Str,
+        offset: 19,
+        len: 2,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 21,
+        len: 1,
+    },
+    Token {
+        kind: Str,
+        offset: 22,
+        len: 20,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 42,
+        len: 1,
+    },
+    Token {
+        kind: Str,
+        offset: 43,
+        len: 20,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 63,
+        len: 1,
+    },
+    Token {
+        kind: Str,
+        offset: 64,
+        len: 8,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 72,
+        len: 1,
+    },
+    Token {
+        kind: Str,
+        offset: 73,
+        len: 6,
+    },
+    Token {
+        kind: EOF,
+        offset: 79,
         len: 1,
     },
 ]

@@ -6,6 +6,7 @@ expression: regex
 ---
 # Input
 /aa/
+/[0-9A-Za-z_\$(|)\[\]\/\\^]/
 
 ---
 # Output
@@ -16,8 +17,18 @@ expression: regex
         len: 4,
     },
     Token {
-        kind: EOF,
+        kind: WhiteSpace,
         offset: 4,
+        len: 1,
+    },
+    Token {
+        kind: Regex,
+        offset: 5,
+        len: 28,
+    },
+    Token {
+        kind: EOF,
+        offset: 33,
         len: 1,
     },
 ]

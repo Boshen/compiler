@@ -130,4 +130,6 @@ pub enum Kind {
     Regex,
     // 12.8.6 Template Literal Lexical Components
     Template,
+    // TODO section
+    Hash,
 }

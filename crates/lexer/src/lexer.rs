@@ -327,6 +327,7 @@ impl<'a> Lexer<'a> {
                 _ => Kind::Percent,
             },
             b':' => Kind::Colon,
+            b'#' => Kind::Hash,
             _ => return None,
         };
         Some((kind, cur + 1))

@@ -8,6 +8,7 @@ expression: punctuator
 { ( ) [ ] . ... ; , < > <= >= == != === !== + - * % ** ++ -- << >> >>> & | ^ ! ~ && || ?? ? : = +=
 -= *= %= **= <<= >>= >>>= &= |= ^= &&= ||= ??= =>
 ?. / /= }
+#
 
 ---
 # Output
@@ -578,8 +579,18 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: EOF,
+        kind: WhiteSpace,
         offset: 158,
+        len: 1,
+    },
+    Token {
+        kind: Hash,
+        offset: 159,
+        len: 1,
+    },
+    Token {
+        kind: EOF,
+        offset: 160,
         len: 1,
     },
 ]

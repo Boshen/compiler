@@ -83,8 +83,10 @@ fn string_literal() {
 #[test]
 fn regex() {
     let input = r#"
-        /aa/
-        /[0-9A-Za-z_\$(|)\[\]\/\\^]/
+        /aa/;
+        /[0-9A-Za-z_\$(|)\[\]\/\\^]/;
+        /[//]/;
+        /[/]/;
     "#;
     test_snapshot("regex", input);
 }

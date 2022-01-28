@@ -2,6 +2,7 @@
 
 mod kind;
 mod lexer;
+mod state;
 mod token;
 
 pub use crate::kind::*;

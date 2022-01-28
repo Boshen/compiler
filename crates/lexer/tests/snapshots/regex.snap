@@ -5,8 +5,10 @@ expression: regex
 
 ---
 # Input
-/aa/
-/[0-9A-Za-z_\$(|)\[\]\/\\^]/
+/aa/;
+/[0-9A-Za-z_\$(|)\[\]\/\\^]/;
+/[//]/;
+/[/]/;
 
 ---
 # Output
@@ -17,18 +19,58 @@ expression: regex
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
+        kind: Semicolon,
         offset: 4,
         len: 1,
     },
     Token {
-        kind: Regex,
+        kind: WhiteSpace,
         offset: 5,
+        len: 1,
+    },
+    Token {
+        kind: Regex,
+        offset: 6,
         len: 28,
     },
     Token {
+        kind: Semicolon,
+        offset: 34,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 35,
+        len: 1,
+    },
+    Token {
+        kind: Regex,
+        offset: 36,
+        len: 6,
+    },
+    Token {
+        kind: Semicolon,
+        offset: 42,
+        len: 1,
+    },
+    Token {
+        kind: WhiteSpace,
+        offset: 43,
+        len: 1,
+    },
+    Token {
+        kind: Regex,
+        offset: 44,
+        len: 5,
+    },
+    Token {
+        kind: Semicolon,
+        offset: 49,
+        len: 1,
+    },
+    Token {
         kind: EOF,
-        offset: 33,
+        offset: 50,
         len: 1,
     },
 ]

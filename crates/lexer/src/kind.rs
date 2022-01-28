@@ -133,3 +133,30 @@ pub enum Kind {
     // TODO section
     Hash,
 }
+#[allow(clippy::enum_glob_use)]
+use self::Kind::*;
+impl Kind {
+    // https://stackoverflow.com/questions/5519596/when-parsing-javascript-what-determines-the-meaning-of-a-slash
+    #[must_use]
+    pub const fn at_expr(&self) -> bool {
+        // punctuators
+        match self {
+            LCurly | RCurly | LParen | LBrack | RBrack | Dot | Dot3 | Semicolon | Comma
+            | LAngle | RAngle | LtEq | GtEq | Eq | Eq2 | Eq3 | Neq | Neq2 | Plus | Plus2
+            | PlusEq | Minus | Minus2 | MinusEq | Star | Star2 | StarEq | Star2Eq | ShiftLeft
+            | ShiftLeftEq | ShiftRight | ShiftRightEq | ShiftRight3 | ShiftRight3Eq | Amp
+            | AmpEq | Amp2 | Amp2Eq | Pipe | PipeEq | Pipe2 | Pipe2Eq | Bang | Tilde | Question
+            | Question2 | Question2Eq | QuestionDot | Caret | CaretEq | Slash | SlashEq
+            | FatArrow | Percent | PercentEq | Colon => return true,
+            _ => {}
+        };
+        // keywords
+        match self {
+            New | Delete | Void | Typeof | Instanceof | In | Do | Return | Case | Throw | Else => {
+                return true
+            }
+            _ => {}
+        };
+        false
+    }
+}

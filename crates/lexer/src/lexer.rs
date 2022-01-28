@@ -1,6 +1,7 @@
 //! Lexer
 
 use crate::kind::{Kind, Number};
+use crate::state::State;
 use crate::token::Token;
 
 type LexerReturn = Option<(Kind, usize)>;
@@ -14,6 +15,9 @@ pub struct Lexer<'a> {
 
     /// Are we at the EOF?
     eof: bool,
+
+    /// Lexer State
+    state: State,
 }
 
 impl Iterator for Lexer<'_> {
@@ -30,18 +34,20 @@ impl Iterator for Lexer<'_> {
 
         let bytes = &self.bytes[self.cur..];
 
-        let result = self
-            .read_whitespaces(bytes)
-            .or_else(|| self.read_line_terminators(bytes))
-            .or_else(|| self.read_comment(bytes))
-            .or_else(|| self.read_name_or_keyword(bytes))
-            .or_else(|| self.read_regex(bytes))
-            .or_else(|| self.read_punctuator(bytes))
-            .or_else(|| self.read_number(bytes))
-            .or_else(|| self.read_string_literal(bytes))
-            .or_else(|| self.read_template_literal(bytes));
+        let result = match self.bytes[self.cur] {
+            b'/' => self.read_slash(bytes),
+            _ => self
+                .read_whitespaces(bytes)
+                .or_else(|| self.read_line_terminators(bytes))
+                .or_else(|| self.read_name_or_keyword(bytes))
+                .or_else(|| self.read_punctuator(bytes))
+                .or_else(|| self.read_number(bytes))
+                .or_else(|| self.read_string_literal(bytes))
+                .or_else(|| self.read_template_literal(bytes)),
+        };
 
         let token = if let Some((kind, len)) = result {
+            self.state.update(&kind);
             Token::new(kind, self.cur, len)
         } else {
             Token::new(Kind::Unknown, self.cur, 1)
@@ -61,6 +67,7 @@ impl<'a> Lexer<'a> {
             bytes: source.as_bytes(),
             cur: 0,
             eof: false,
+            state: State::new(),
         }
     }
 
@@ -90,32 +97,36 @@ impl<'a> Lexer<'a> {
         Some((Kind::LineTerminator, cur))
     }
 
-    /// Section 12.4 Comments
-    fn read_comment(&self, bytes: &[u8]) -> LexerReturn {
-        if bytes.starts_with(&[b'/', b'/']) {
-            let mut cur = 2;
-            while let Some(bytes) = bytes.get(cur..) {
-                if let Some(len) = self.read_line_terminator(bytes) {
-                    cur += len;
-                    break;
-                }
-                cur += 1;
+    /// Section 12.4 Single Line Comment
+    #[allow(clippy::unnecessary_wraps)]
+    fn read_single_comment(&self, bytes: &[u8]) -> LexerReturn {
+        assert_eq!(bytes[0], b'/');
+        assert_eq!(bytes[1], b'/');
+        let mut cur = 2;
+        while let Some(bytes) = bytes.get(cur..) {
+            if let Some(len) = self.read_line_terminator(bytes) {
+                cur += len;
+                break;
             }
-            return Some((Kind::Comment, cur));
+            cur += 1;
         }
-        if bytes.starts_with(&[b'/', b'*']) {
-            let mut cur = 2;
-            while let Some(bytes) = bytes.get(cur..) {
-                if bytes.starts_with(&[b'*', b'/']) {
-                    cur += 2;
-                    break;
-                }
-                cur += 1;
+        Some((Kind::Comment, cur))
+    }
+
+    /// Section 12.4 Multi Line Comment
+    #[allow(clippy::unnecessary_wraps)]
+    fn read_multiline_comment(&self, bytes: &[u8]) -> LexerReturn {
+        assert_eq!(bytes[0], b'/');
+        assert_eq!(bytes[1], b'*');
+        let mut cur = 2;
+        while let Some(bytes) = bytes.get(cur..) {
+            if bytes.starts_with(&[b'*', b'/']) {
+                cur += 2;
+                break;
             }
-            return Some((Kind::MultilineComment, cur));
+            cur += 1;
         }
-        // TODO Error
-        None
+        Some((Kind::MultilineComment, cur))
     }
 
     /// Section 12.6 Names and Keywords
@@ -310,14 +321,6 @@ impl<'a> Lexer<'a> {
                     Kind::CaretEq
                 }
                 _ => Kind::Caret,
-            },
-            b'/' => match bytes[1..] {
-                [b'=', ..] => {
-                    cur += 1;
-                    Kind::SlashEq
-                }
-                // TODO fix regex here
-                _ => Kind::Slash,
             },
             b'%' => match bytes[1..] {
                 [b'=', ..] => {
@@ -524,29 +527,39 @@ impl<'a> Lexer<'a> {
 
     /// 12.8.5 Regular Expression Literals
     fn read_regex(&self, bytes: &[u8]) -> LexerReturn {
-        match bytes[0] {
-            // TODO combine this check with comment slash and single slash
-            b'/' => {
-                if bytes.get(1) == Some(&b'/') {
-                    return None;
+        assert_eq!(bytes[0], b'/');
+        assert_ne!(bytes[1], b'/');
+        let mut cur = 1;
+        let mut iter = bytes[cur..].iter();
+        let mut bracket = false;
+        while let Some(b) = iter.next() {
+            match &b {
+                b'[' => {
+                    bracket = true;
                 }
-                let mut cur = 1;
-                let mut iter = bytes[cur..].iter();
-                while let Some(b) = iter.next() {
-                    if b == &b'\\' && bytes.get(cur + 1) == Some(&b'/') {
+                b']' => {
+                    bracket = false;
+                }
+                b'/' => {
+                    if bracket {
+                        cur += 1;
+                        continue;
+                    }
+                    return Some((Kind::Regex, cur + 1));
+                }
+                b'\\' => {
+                    if bytes.get(cur + 1) == Some(&b'/') {
                         cur += 2;
                         iter.next();
-                    } else if b == &b'/' {
-                        return Some((Kind::Regex, cur + 1));
-                    } else {
-                        cur += 1;
+                        continue;
                     }
                 }
-                // TODO error
-                None
+                _ => {}
             }
-            _ => None,
+            cur += 1;
         }
+        // TODO error
+        None
     }
 
     /// 12.8.6 Template Literal Lexical Components
@@ -576,6 +589,23 @@ impl<'a> Lexer<'a> {
         None
     }
 
+    /// Read Slash `/`:
+    ///   * Single Line Comment //
+    ///   * `MultilineComment` /* */
+    ///   * Regex /regex/
+    ///   * `SlashEq` /=
+    ///   * `Slash` /
+    fn read_slash(&self, bytes: &[u8]) -> LexerReturn {
+        assert_eq!(bytes[0], b'/');
+        match bytes.get(1) {
+            Some(b'/') => self.read_single_comment(bytes),
+            Some(b'*') => self.read_multiline_comment(bytes),
+            Some(b'=') => Some((Kind::SlashEq, 2)),
+            Some(_) if self.state.allow_read_regex() => self.read_regex(bytes),
+            _ => Some((Kind::Slash, 1)),
+        }
+    }
+
     /* ---------- utils ---------- */
 
     /// Read line terminator and return its length
@@ -601,6 +631,6 @@ impl<'a> Lexer<'a> {
         std::str::from_utf8(bytes)
             .ok()
             .and_then(|str| str.chars().next())
-            .map(|c| c.len_utf8())
+            .map(char::len_utf8)
     }
 }

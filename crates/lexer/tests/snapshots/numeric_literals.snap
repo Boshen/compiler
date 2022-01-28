@@ -1,18 +1,17 @@
 ---
 source: crates/lexer/tests/lib.rs
-assertion_line: 12
+assertion_line: 13
 expression: numeric_literals
 
 ---
 # Input
-
 0 123
 0b1 0B12
 0o1 0O12
 0x1 0X12
 0123 0789
 0n 123n
-    
+
 ---
 # Output
 [

@@ -1,11 +1,10 @@
 ---
 source: crates/lexer/tests/lib.rs
-assertion_line: 12
+assertion_line: 13
 expression: identifiers
 
 ---
 # Input
-
 // comment
 /* multiline comment */
 await break case catch class const continue debugger default delete do else enum export extends
@@ -15,7 +14,7 @@ $ _ $a _a abc_$
 { ( ) [ ] . ... ; , < > <= >= == != === !== + - * % ** ++ -- << >> >>> & | ^ ! ~ && || ?? ? : = +=
 -= *= %= **= <<= >>= >>>= &= |= ^= &&= ||= ??= =>
 ?. / /= }
-    
+
 ---
 # Output
 [

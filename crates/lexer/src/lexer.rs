@@ -1,5 +1,6 @@
 //! Lexer
 
+use crate::constants::UNICODE_SPACES;
 use crate::kind::{Kind, Number};
 use crate::state::State;
 use crate::token::Token;
@@ -73,9 +74,14 @@ impl<'a> Lexer<'a> {
     }
 
     /// Section 12.2 Whitespace
-    /// TODO read all whitespace codepoints
+    /// TODO Improve performance on reading unicode whitespace
     fn read_whitespaces(&self, bytes: &[u8]) -> LexerReturn {
-        let len = bytes.iter().take_while(|b| b.is_ascii_whitespace()).count();
+        let len = std::str::from_utf8(bytes)
+            .unwrap()
+            .chars()
+            .take_while(|c| c.is_ascii_whitespace() || UNICODE_SPACES.contains(c))
+            .map(char::len_utf8)
+            .sum();
         if len == 0 {
             return None;
         }

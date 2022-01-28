@@ -1,5 +1,6 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 
+mod constants;
 mod kind;
 mod lexer;
 mod state;

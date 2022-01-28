@@ -1,5 +1,9 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 
+use codespan_reporting::diagnostic::{Diagnostic, Label};
+use codespan_reporting::files::SimpleFiles;
+use codespan_reporting::term;
+use codespan_reporting::term::termcolor::{ColorChoice, StandardStream};
 use rayon::prelude::*;
 use std::{
     env, fs,
@@ -27,45 +31,61 @@ pub fn project_root() -> PathBuf {
 
 fn main() {
     let root = project_root().join("tasks/coverage/test262/test/");
-    let entries = WalkDir::new(root)
+    let entries = WalkDir::new(&root)
         .into_iter()
         .filter_map(Result::ok)
         .filter(|e| e.file_type().is_file())
-        .filter(|e| !e.path().to_string_lossy().contains("_FIXTURE"))
+        .map(|e| e.path().to_string_lossy().to_string())
+        .filter(|path| !path.contains("_FIXTURE"))
         .collect::<Vec<_>>();
 
     println!("Reading {} files.", entries.len());
 
     let codes = entries
         .par_iter()
-        .map(|e| {
-            let code = fs::read_to_string(e.path()).unwrap();
-            let (code, meta) = read_metadata(code.as_str()).unwrap();
-            (e.path(), code.to_string(), meta)
+        .map(|path| {
+            let code = fs::read_to_string(path).unwrap();
+            (
+                path.strip_prefix(root.clone().as_path().to_str().unwrap())
+                    .unwrap(),
+                code,
+            )
         })
         .collect::<Vec<_>>();
 
-    println!("Running Lexer agains {} files.", codes.len());
+    let mut files = SimpleFiles::new();
+    let mut lexers = Vec::with_capacity(codes.len());
+    for (path, code) in &codes {
+        let (code, _meta) = read_metadata(code.as_str()).unwrap();
+        let file_id = files.add(path, code);
+        lexers.push((file_id, Lexer::new(code)));
+    }
+
+    println!("Running Lexer ...");
+
     let now = Instant::now();
 
-    let failed = codes
-        .par_iter()
-        .filter_map(|(path, code, _meta)| {
-            let tokens = Lexer::new(code).into_iter().collect::<Vec<_>>();
-            if tokens.iter().any(Token::is_unknown) {
-                Some((path, code, tokens))
-            } else {
-                None
-            }
+    let failed = lexers
+        .into_par_iter()
+        .filter_map(|(file_id, lexer)| {
+            lexer
+                .into_iter()
+                .find(Token::is_unknown)
+                .map(|token| (file_id, token))
         })
         .collect::<Vec<_>>();
 
     let duration = now.elapsed();
 
-    failed
-        .iter()
-        .take(10)
-        .for_each(|(path, _code, _tokens)| println!("{path:?}"));
+    let writer = StandardStream::stderr(ColorChoice::Always);
+    let config = codespan_reporting::term::Config::default();
+
+    failed.iter().take(5).for_each(|(file_id, token)| {
+        let diagnostic = Diagnostic::error()
+            .with_message("Unknown Token")
+            .with_labels(vec![Label::primary(*file_id, token.range())]);
+        term::emit(&mut writer.lock(), &config, &files, &diagnostic).ok();
+    });
 
     #[allow(clippy::cast_precision_loss)]
     let diff = ((codes.len() - failed.len()) as f64 / codes.len() as f64) * 100.0;

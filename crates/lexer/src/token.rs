@@ -1,5 +1,7 @@
 //! Token
 
+use std::ops::Range;
+
 use crate::kind::Kind;
 
 #[allow(dead_code)]
@@ -29,6 +31,11 @@ impl Token {
     #[must_use]
     pub const fn is_empty(&self) -> bool {
         self.len == 0
+    }
+
+    #[must_use]
+    pub const fn range(&self) -> Range<usize> {
+        self.offset..(self.offset + self.len)
     }
 
     #[must_use]

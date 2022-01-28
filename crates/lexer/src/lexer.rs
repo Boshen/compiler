@@ -49,9 +49,9 @@ impl Iterator for Lexer<'_> {
 
 impl<'a> Lexer<'a> {
     #[must_use]
-    pub const fn new(input: &'a str) -> Self {
+    pub const fn new(source: &'a str) -> Self {
         Self {
-            bytes: input.as_bytes(),
+            bytes: source.as_bytes(),
             cur: 0,
             eof: false,
         }

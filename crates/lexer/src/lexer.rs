@@ -442,42 +442,35 @@ impl<'a> Lexer<'a> {
     /// 12.8.3 Numeric Literals
     /// TODO numeric separators
     /// TODO exponential
+    #[allow(clippy::unnecessary_wraps)]
     fn read_number(&self, bytes: &[u8]) -> LexerReturn {
         assert!(bytes[0].is_ascii_digit());
         let mut kind = Number::Decimal;
-        let mut cur = 1;
-        let mut iter = bytes[cur..].iter();
-        while let Some(b) = iter.next() {
-            if b == &b'.' {
-                if kind == Number::Float {
-                    // TODO error
-                    return None;
-                }
-                if let Some(d) = bytes.get(cur + 1) {
-                    if d.is_ascii_digit() {
-                        cur += 2;
-                        kind = Number::Float;
-                        iter.next();
-                        continue;
+        let mut len = 0;
+        for b in bytes.iter().skip(1) {
+            match &b {
+                b'.' => {
+                    if kind == Number::Float {
+                        break;
                     }
+                    len += 1;
+                    kind = Number::Float;
                 }
-            }
-            if !b.is_ascii_digit() {
-                break;
-            }
-            cur += 1;
-        }
-        if let Some(b) = bytes.get(cur) {
-            if b == &b'n' {
-                if kind == Number::Float {
-                    // TODO error
-                    return None;
+                b'n' => {
+                    if kind != Number::Decimal {
+                        break;
+                    }
+                    len += 1;
+                    kind = Number::BigInt;
+                    break;
                 }
-                cur += 1;
-                kind = Number::BigInt;
+                n if n.is_ascii_digit() => {
+                    len += 1;
+                }
+                _ => break,
             }
         }
-        Some((Kind::Number(kind), cur))
+        Some((Kind::Number(kind), len + 1))
     }
 
     /// 12.8.3 Numeric Literals with `0` prefix

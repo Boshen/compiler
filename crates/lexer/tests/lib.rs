@@ -66,8 +66,9 @@ fn numeric_literal() {
         0x1 0X12
         0123 0789
         0. 0.0 0.123
+        1n
         123n
-        1.0 1.1
+        1.0 1.1 1.1.foo
     ";
     test_snapshot("numeric_literal", input);
 }

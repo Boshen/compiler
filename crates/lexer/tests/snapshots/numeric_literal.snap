@@ -11,8 +11,9 @@ expression: numeric_literal
 0x1 0X12
 0123 0789
 0. 0.0 0.123
+1n
 123n
-1.0 1.1
+1.0 1.1 1.1.foo
 
 ---
 # Output
@@ -120,25 +121,49 @@ expression: numeric_literal
             BigInt,
         ),
         offset: 55,
+        len: 2,
+    },
+    Token {
+        kind: Number(
+            BigInt,
+        ),
+        offset: 58,
         len: 4,
     },
     Token {
         kind: Number(
             Float,
         ),
-        offset: 60,
+        offset: 63,
         len: 3,
     },
     Token {
         kind: Number(
             Float,
         ),
-        offset: 64,
+        offset: 67,
+        len: 3,
+    },
+    Token {
+        kind: Number(
+            Float,
+        ),
+        offset: 71,
+        len: 3,
+    },
+    Token {
+        kind: Dot,
+        offset: 74,
+        len: 1,
+    },
+    Token {
+        kind: Ident,
+        offset: 75,
         len: 3,
     },
     Token {
         kind: EOF,
-        offset: 67,
+        offset: 78,
         len: 1,
     },
 ]

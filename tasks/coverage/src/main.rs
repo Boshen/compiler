@@ -92,15 +92,11 @@ fn main() {
         term::emit(&mut writer.lock(), &config, &files, &diagnostic).ok();
     });
 
+    let passed = codes.len() - failed.len();
     #[allow(clippy::cast_precision_loss)]
-    let diff = ((codes.len() - failed.len()) as f64 / codes.len() as f64) * 100.0;
+    let diff = (passed as f64 / codes.len() as f64) * 100.0;
 
-    println!(
-        "Lexing Passed: {}/{} ({:.2}%)",
-        failed.len(),
-        codes.len(),
-        diff
-    );
+    println!("Lexing Passed: {}/{} ({:.2}%)", passed, codes.len(), diff);
     println!(
         "Time Elapased: {}.{}s",
         duration.as_secs(),

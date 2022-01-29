@@ -142,17 +142,18 @@ impl Kind {
     }
 
     // https://stackoverflow.com/questions/5519596/when-parsing-javascript-what-determines-the-meaning-of-a-slash
+    // https://www-archive.mozilla.org/js/language/js20-2002-04/rationale/syntax.html#regular-expressions
     #[must_use]
     pub const fn at_expr(&self) -> bool {
         // punctuators
         match self {
-            LCurly | RCurly | LParen | LBrack | RBrack | Dot | Dot3 | Semicolon | Comma
-            | LAngle | RAngle | LtEq | GtEq | Eq | Eq2 | Eq3 | Neq | Neq2 | Plus | Plus2
-            | PlusEq | Minus | Minus2 | MinusEq | Star | Star2 | StarEq | Star2Eq | ShiftLeft
-            | ShiftLeftEq | ShiftRight | ShiftRightEq | ShiftRight3 | ShiftRight3Eq | Amp
-            | AmpEq | Amp2 | Amp2Eq | Pipe | PipeEq | Pipe2 | Pipe2Eq | Bang | Tilde | Question
-            | Question2 | Question2Eq | QuestionDot | Caret | CaretEq | Slash | SlashEq
-            | FatArrow | Percent | PercentEq | Colon => return true,
+            LCurly | LParen | LBrack | Dot | Dot3 | Semicolon | Comma | LAngle | RAngle | LtEq
+            | GtEq | Eq | Eq2 | Eq3 | Neq | Neq2 | Plus | Plus2 | PlusEq | Minus | Minus2
+            | MinusEq | Star | Star2 | StarEq | Star2Eq | ShiftLeft | ShiftLeftEq | ShiftRight
+            | ShiftRightEq | ShiftRight3 | ShiftRight3Eq | Amp | AmpEq | Amp2 | Amp2Eq | Pipe
+            | PipeEq | Pipe2 | Pipe2Eq | Bang | Tilde | Question | Question2 | Question2Eq
+            | QuestionDot | Caret | CaretEq | Slash | SlashEq | FatArrow | Percent | PercentEq
+            | Colon => return true,
             _ => {}
         };
         // keywords

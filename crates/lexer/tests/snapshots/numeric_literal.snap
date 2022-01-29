@@ -14,6 +14,10 @@ expression: numeric_literal
 1n
 123n
 1.0 1.1 1.1.foo
+0E-1 0E+1 0e-12 0e+12
+0e0 0e00 0e01
+1e1 1e23
+1.0e1 1.0e1
 
 ---
 # Output
@@ -202,8 +206,105 @@ expression: numeric_literal
         len: 3,
     },
     Token {
-        kind: EOF,
+        kind: LineTerminator,
         offset: 78,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 79,
+        len: 4,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 84,
+        len: 4,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 89,
+        len: 5,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 95,
+        len: 5,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 100,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 101,
+        len: 3,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 105,
+        len: 4,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 110,
+        len: 4,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 114,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 115,
+        len: 3,
+    },
+    Token {
+        kind: Number(
+            Decimal,
+        ),
+        offset: 119,
+        len: 4,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 123,
+        len: 1,
+    },
+    Token {
+        kind: Number(
+            Float,
+        ),
+        offset: 124,
+        len: 5,
+    },
+    Token {
+        kind: Number(
+            Float,
+        ),
+        offset: 130,
+        len: 5,
+    },
+    Token {
+        kind: EOF,
+        offset: 135,
         len: 1,
     },
 ]

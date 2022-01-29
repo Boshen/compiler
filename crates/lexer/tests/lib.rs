@@ -69,6 +69,10 @@ fn numeric_literal() {
         1n
         123n
         1.0 1.1 1.1.foo
+        0E-1 0E+1 0e-12 0e+12
+        0e0 0e00 0e01
+        1e1 1e23
+        1.0e1 1.0e1
     ";
     test_snapshot("numeric_literal", input);
 }

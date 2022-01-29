@@ -347,8 +347,9 @@ dependencies = [
 
 [[package]]
 name = "unicode-id"
-version = "0.2.2"
-source = "git+https://github.com/Boshen/unicode-id#d7284dd4ea71bc40f52f841e5f247ffd030e4e51"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4285d92be83dfbc8950a2601178b89ed36f979ebf51bfcf7b272b17001184e6c"
 
 [[package]]
 name = "unicode-width"

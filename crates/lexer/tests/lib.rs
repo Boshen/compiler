@@ -102,9 +102,7 @@ fn regex() {
 #[test]
 fn template_literal() {
     let input = r#"
-        ``
-        `123`
-        `\`\r`
+        `` `123` `\`\r` `\\`
     "#;
     test_snapshot("template_literal", input);
 }

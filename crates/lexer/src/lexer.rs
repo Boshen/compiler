@@ -639,7 +639,7 @@ impl<'a> Lexer<'a> {
         while let Some((len, b)) = iter.next() {
             match &b {
                 b'\\' => {
-                    iter.next_if(|t| t.1 == &b'`');
+                    iter.next_if(|t| t.1 == &b'`' || t.1 == &b'\\');
                 }
                 b'`' => return Some((Kind::Template, len + 1)),
                 _ => {}

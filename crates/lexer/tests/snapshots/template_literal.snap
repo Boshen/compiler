@@ -5,9 +5,7 @@ expression: template_literal
 
 ---
 # Input
-``
-`123`
-`\`\r`
+`` `123` `\`\r` `\\`
 
 ---
 # Output
@@ -18,19 +16,9 @@ expression: template_literal
         len: 2,
     },
     Token {
-        kind: LineTerminator,
-        offset: 2,
-        len: 1,
-    },
-    Token {
         kind: Template,
         offset: 3,
         len: 5,
-    },
-    Token {
-        kind: LineTerminator,
-        offset: 8,
-        len: 1,
     },
     Token {
         kind: Template,
@@ -38,8 +26,13 @@ expression: template_literal
         len: 6,
     },
     Token {
+        kind: Template,
+        offset: 16,
+        len: 4,
+    },
+    Token {
         kind: EOF,
-        offset: 15,
+        offset: 20,
         len: 1,
     },
 ]

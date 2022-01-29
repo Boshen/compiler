@@ -1,0 +1,11 @@
+[package]
+name = "benchmark"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+lexer = { path = "../../crates/lexer" }
+
+criterion = {version = "0.3", default-features = false }
+ureq = "2.4.0"
+url = "2.2.2"

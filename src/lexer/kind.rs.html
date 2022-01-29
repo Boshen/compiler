@@ -161,9 +161,15 @@
 <span id="160">160</span>
 <span id="161">161</span>
 <span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
 </pre><pre class="rust"><code><span class="doccomment">//! ECMAScript Token Kinds</span>
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Number</span> {
     <span class="ident">Decimal</span>,
     <span class="ident">Float</span>,
@@ -173,7 +179,7 @@
     <span class="ident">BigInt</span>,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Kind</span> {
     <span class="ident">Unknown</span>,
     <span class="ident">EOF</span>,
@@ -299,18 +305,24 @@
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::enum_glob_use</span>)]</span>
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::Kind</span>::<span class="kw-2">*</span>;
 <span class="kw">impl</span> <span class="ident">Kind</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">is_whitespace</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+        <span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident">WhiteSpace</span>)
+    }
+
     <span class="comment">// https://stackoverflow.com/questions/5519596/when-parsing-javascript-what-determines-the-meaning-of-a-slash</span>
+    <span class="comment">// https://www-archive.mozilla.org/js/language/js20-2002-04/rationale/syntax.html#regular-expressions</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">at_expr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="comment">// punctuators</span>
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">LCurly</span> <span class="op">|</span> <span class="ident">RCurly</span> <span class="op">|</span> <span class="ident">LParen</span> <span class="op">|</span> <span class="ident">LBrack</span> <span class="op">|</span> <span class="ident">RBrack</span> <span class="op">|</span> <span class="ident">Dot</span> <span class="op">|</span> <span class="ident">Dot3</span> <span class="op">|</span> <span class="ident">Semicolon</span> <span class="op">|</span> <span class="ident">Comma</span>
-            <span class="op">|</span> <span class="ident">LAngle</span> <span class="op">|</span> <span class="ident">RAngle</span> <span class="op">|</span> <span class="ident">LtEq</span> <span class="op">|</span> <span class="ident">GtEq</span> <span class="op">|</span> <span class="ident">Eq</span> <span class="op">|</span> <span class="ident">Eq2</span> <span class="op">|</span> <span class="ident">Eq3</span> <span class="op">|</span> <span class="ident">Neq</span> <span class="op">|</span> <span class="ident">Neq2</span> <span class="op">|</span> <span class="ident">Plus</span> <span class="op">|</span> <span class="ident">Plus2</span>
-            <span class="op">|</span> <span class="ident">PlusEq</span> <span class="op">|</span> <span class="ident">Minus</span> <span class="op">|</span> <span class="ident">Minus2</span> <span class="op">|</span> <span class="ident">MinusEq</span> <span class="op">|</span> <span class="ident">Star</span> <span class="op">|</span> <span class="ident">Star2</span> <span class="op">|</span> <span class="ident">StarEq</span> <span class="op">|</span> <span class="ident">Star2Eq</span> <span class="op">|</span> <span class="ident">ShiftLeft</span>
-            <span class="op">|</span> <span class="ident">ShiftLeftEq</span> <span class="op">|</span> <span class="ident">ShiftRight</span> <span class="op">|</span> <span class="ident">ShiftRightEq</span> <span class="op">|</span> <span class="ident">ShiftRight3</span> <span class="op">|</span> <span class="ident">ShiftRight3Eq</span> <span class="op">|</span> <span class="ident">Amp</span>
-            <span class="op">|</span> <span class="ident">AmpEq</span> <span class="op">|</span> <span class="ident">Amp2</span> <span class="op">|</span> <span class="ident">Amp2Eq</span> <span class="op">|</span> <span class="ident">Pipe</span> <span class="op">|</span> <span class="ident">PipeEq</span> <span class="op">|</span> <span class="ident">Pipe2</span> <span class="op">|</span> <span class="ident">Pipe2Eq</span> <span class="op">|</span> <span class="ident">Bang</span> <span class="op">|</span> <span class="ident">Tilde</span> <span class="op">|</span> <span class="ident">Question</span>
-            <span class="op">|</span> <span class="ident">Question2</span> <span class="op">|</span> <span class="ident">Question2Eq</span> <span class="op">|</span> <span class="ident">QuestionDot</span> <span class="op">|</span> <span class="ident">Caret</span> <span class="op">|</span> <span class="ident">CaretEq</span> <span class="op">|</span> <span class="ident">Slash</span> <span class="op">|</span> <span class="ident">SlashEq</span>
-            <span class="op">|</span> <span class="ident">FatArrow</span> <span class="op">|</span> <span class="ident">Percent</span> <span class="op">|</span> <span class="ident">PercentEq</span> <span class="op">|</span> <span class="ident">Colon</span> =&gt; <span class="kw">return</span> <span class="bool-val">true</span>,
+            <span class="ident">LCurly</span> <span class="op">|</span> <span class="ident">LParen</span> <span class="op">|</span> <span class="ident">LBrack</span> <span class="op">|</span> <span class="ident">Dot</span> <span class="op">|</span> <span class="ident">Dot3</span> <span class="op">|</span> <span class="ident">Semicolon</span> <span class="op">|</span> <span class="ident">Comma</span> <span class="op">|</span> <span class="ident">LAngle</span> <span class="op">|</span> <span class="ident">RAngle</span> <span class="op">|</span> <span class="ident">LtEq</span>
+            <span class="op">|</span> <span class="ident">GtEq</span> <span class="op">|</span> <span class="ident">Eq</span> <span class="op">|</span> <span class="ident">Eq2</span> <span class="op">|</span> <span class="ident">Eq3</span> <span class="op">|</span> <span class="ident">Neq</span> <span class="op">|</span> <span class="ident">Neq2</span> <span class="op">|</span> <span class="ident">Plus</span> <span class="op">|</span> <span class="ident">Plus2</span> <span class="op">|</span> <span class="ident">PlusEq</span> <span class="op">|</span> <span class="ident">Minus</span> <span class="op">|</span> <span class="ident">Minus2</span>
+            <span class="op">|</span> <span class="ident">MinusEq</span> <span class="op">|</span> <span class="ident">Star</span> <span class="op">|</span> <span class="ident">Star2</span> <span class="op">|</span> <span class="ident">StarEq</span> <span class="op">|</span> <span class="ident">Star2Eq</span> <span class="op">|</span> <span class="ident">ShiftLeft</span> <span class="op">|</span> <span class="ident">ShiftLeftEq</span> <span class="op">|</span> <span class="ident">ShiftRight</span>
+            <span class="op">|</span> <span class="ident">ShiftRightEq</span> <span class="op">|</span> <span class="ident">ShiftRight3</span> <span class="op">|</span> <span class="ident">ShiftRight3Eq</span> <span class="op">|</span> <span class="ident">Amp</span> <span class="op">|</span> <span class="ident">AmpEq</span> <span class="op">|</span> <span class="ident">Amp2</span> <span class="op">|</span> <span class="ident">Amp2Eq</span> <span class="op">|</span> <span class="ident">Pipe</span>
+            <span class="op">|</span> <span class="ident">PipeEq</span> <span class="op">|</span> <span class="ident">Pipe2</span> <span class="op">|</span> <span class="ident">Pipe2Eq</span> <span class="op">|</span> <span class="ident">Bang</span> <span class="op">|</span> <span class="ident">Tilde</span> <span class="op">|</span> <span class="ident">Question</span> <span class="op">|</span> <span class="ident">Question2</span> <span class="op">|</span> <span class="ident">Question2Eq</span>
+            <span class="op">|</span> <span class="ident">QuestionDot</span> <span class="op">|</span> <span class="ident">Caret</span> <span class="op">|</span> <span class="ident">CaretEq</span> <span class="op">|</span> <span class="ident">Slash</span> <span class="op">|</span> <span class="ident">SlashEq</span> <span class="op">|</span> <span class="ident">FatArrow</span> <span class="op">|</span> <span class="ident">Percent</span> <span class="op">|</span> <span class="ident">PercentEq</span>
+            <span class="op">|</span> <span class="ident">Colon</span> =&gt; <span class="kw">return</span> <span class="bool-val">true</span>,
             <span class="kw">_</span> =&gt; {}
         };
         <span class="comment">// keywords</span>

@@ -41,13 +41,13 @@ impl Iterator for Lexer<'_> {
             b'/' => self.read_slash(bytes),
             b'0' => self.read_zero(bytes),
             b'1'..=b'9' => self.read_number(bytes),
+            b'`' => self.read_template_literal(bytes),
             _ => self
                 .read_whitespaces(bytes)
                 .or_else(|| self.read_line_terminators(bytes))
                 .or_else(|| self.read_name_or_keyword(bytes))
                 .or_else(|| self.read_punctuator(bytes))
-                .or_else(|| self.read_string_literal(bytes))
-                .or_else(|| self.read_template_literal(bytes)),
+                .or_else(|| self.read_string_literal(bytes)),
         };
 
         let token = if let Some((kind, len)) = result {
@@ -651,13 +651,18 @@ impl<'a> Lexer<'a> {
 
     /// 12.8.6 Template Literal Lexical Components
     fn read_template_literal(&self, bytes: &[u8]) -> LexerReturn {
-        match bytes[0] {
-            b'`' => {
-                let len = bytes[1..].iter().take_while(|b| b != &&b'`').count();
-                Some((Kind::Template, len + 2))
+        assert_eq!(bytes[0], b'`');
+        let mut iter = bytes.iter().enumerate().skip(1).peekable();
+        while let Some((len, b)) = iter.next() {
+            match &b {
+                b'\\' => {
+                    iter.next_if(|t| t.1 == &b'`');
+                }
+                b'`' => return Some((Kind::Template, len + 1)),
+                _ => {}
             }
-            _ => None,
         }
+        None
     }
 
     fn read_escape_sequence(&self, bytes: &[u8]) -> Option<usize> {

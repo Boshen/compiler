@@ -209,6 +209,11 @@ expression: punctuator
         len: 2,
     },
     Token {
+        kind: LineTerminator,
+        offset: 98,
+        len: 1,
+    },
+    Token {
         kind: MinusEq,
         offset: 99,
         len: 2,
@@ -279,6 +284,11 @@ expression: punctuator
         len: 2,
     },
     Token {
+        kind: LineTerminator,
+        offset: 148,
+        len: 1,
+    },
+    Token {
         kind: Question,
         offset: 149,
         len: 1,
@@ -301,6 +311,11 @@ expression: punctuator
     Token {
         kind: RCurly,
         offset: 157,
+        len: 1,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 158,
         len: 1,
     },
     Token {

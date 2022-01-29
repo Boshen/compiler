@@ -28,6 +28,11 @@ expression: string_literal
         len: 7,
     },
     Token {
+        kind: LineTerminator,
+        offset: 15,
+        len: 1,
+    },
+    Token {
         kind: Str,
         offset: 16,
         len: 2,
@@ -38,14 +43,29 @@ expression: string_literal
         len: 2,
     },
     Token {
+        kind: LineTerminator,
+        offset: 21,
+        len: 1,
+    },
+    Token {
         kind: Str,
         offset: 22,
         len: 20,
     },
     Token {
+        kind: LineTerminator,
+        offset: 42,
+        len: 1,
+    },
+    Token {
         kind: Str,
         offset: 43,
         len: 20,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 63,
+        len: 1,
     },
     Token {
         kind: Str,
@@ -58,9 +78,19 @@ expression: string_literal
         len: 6,
     },
     Token {
+        kind: LineTerminator,
+        offset: 79,
+        len: 1,
+    },
+    Token {
         kind: Str,
         offset: 80,
         len: 8,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 88,
+        len: 1,
     },
     Token {
         kind: Str,

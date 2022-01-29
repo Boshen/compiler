@@ -18,9 +18,19 @@ expression: template_literal
         len: 2,
     },
     Token {
+        kind: LineTerminator,
+        offset: 2,
+        len: 1,
+    },
+    Token {
         kind: Template,
         offset: 3,
         len: 5,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 8,
+        len: 1,
     },
     Token {
         kind: Template,

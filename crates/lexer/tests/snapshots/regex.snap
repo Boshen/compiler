@@ -24,6 +24,11 @@ expression: regex
         len: 1,
     },
     Token {
+        kind: LineTerminator,
+        offset: 5,
+        len: 1,
+    },
+    Token {
         kind: Regex,
         offset: 6,
         len: 28,
@@ -34,6 +39,11 @@ expression: regex
         len: 1,
     },
     Token {
+        kind: LineTerminator,
+        offset: 35,
+        len: 1,
+    },
+    Token {
         kind: Regex,
         offset: 36,
         len: 6,
@@ -41,6 +51,11 @@ expression: regex
     Token {
         kind: Semicolon,
         offset: 42,
+        len: 1,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 43,
         len: 1,
     },
     Token {

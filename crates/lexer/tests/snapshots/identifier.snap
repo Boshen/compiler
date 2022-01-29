@@ -38,6 +38,11 @@ x‍ x‌
         len: 5,
     },
     Token {
+        kind: LineTerminator,
+        offset: 15,
+        len: 1,
+    },
+    Token {
         kind: Ident,
         offset: 16,
         len: 6,
@@ -56,6 +61,11 @@ x‍ x‌
         kind: Ident,
         offset: 38,
         len: 7,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 45,
+        len: 1,
     },
     Token {
         kind: Ident,

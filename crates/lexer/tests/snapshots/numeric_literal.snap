@@ -33,6 +33,11 @@ expression: numeric_literal
         len: 2,
     },
     Token {
+        kind: LineTerminator,
+        offset: 4,
+        len: 1,
+    },
+    Token {
         kind: Number(
             Binary,
         ),
@@ -54,6 +59,11 @@ expression: numeric_literal
         len: 1,
     },
     Token {
+        kind: LineTerminator,
+        offset: 13,
+        len: 1,
+    },
+    Token {
         kind: Number(
             Octal,
         ),
@@ -66,6 +76,11 @@ expression: numeric_literal
         ),
         offset: 18,
         len: 4,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 22,
+        len: 1,
     },
     Token {
         kind: Number(
@@ -82,6 +97,11 @@ expression: numeric_literal
         len: 4,
     },
     Token {
+        kind: LineTerminator,
+        offset: 31,
+        len: 1,
+    },
+    Token {
         kind: Number(
             Octal,
         ),
@@ -94,6 +114,11 @@ expression: numeric_literal
         ),
         offset: 37,
         len: 4,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 41,
+        len: 1,
     },
     Token {
         kind: Number(
@@ -117,6 +142,11 @@ expression: numeric_literal
         len: 5,
     },
     Token {
+        kind: LineTerminator,
+        offset: 54,
+        len: 1,
+    },
+    Token {
         kind: Number(
             BigInt,
         ),
@@ -124,11 +154,21 @@ expression: numeric_literal
         len: 2,
     },
     Token {
+        kind: LineTerminator,
+        offset: 57,
+        len: 1,
+    },
+    Token {
         kind: Number(
             BigInt,
         ),
         offset: 58,
         len: 4,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 62,
+        len: 1,
     },
     Token {
         kind: Number(

@@ -88,6 +88,11 @@ undefined
         len: 7,
     },
     Token {
+        kind: LineTerminator,
+        offset: 95,
+        len: 1,
+    },
+    Token {
         kind: False,
         offset: 96,
         len: 5,
@@ -201,6 +206,11 @@ undefined
         kind: Yield,
         offset: 223,
         len: 5,
+    },
+    Token {
+        kind: LineTerminator,
+        offset: 228,
+        len: 1,
     },
     Token {
         kind: Ident,

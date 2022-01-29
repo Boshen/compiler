@@ -34,6 +34,11 @@ impl Token {
     }
 
     #[must_use]
+    pub const fn kind(&self) -> &Kind {
+        &self.kind
+    }
+
+    #[must_use]
     pub const fn range(&self) -> Range<usize> {
         self.offset..(self.offset + self.len)
     }

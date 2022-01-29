@@ -1,6 +1,6 @@
 ---
 source: crates/lexer/tests/lib.rs
-assertion_line: 13
+assertion_line: 16
 expression: identifier
 
 ---
@@ -18,18 +18,8 @@ $ _ $a _a abc_$
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 1,
-        len: 1,
-    },
-    Token {
         kind: Ident,
         offset: 2,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 3,
         len: 1,
     },
     Token {
@@ -38,19 +28,9 @@ $ _ $a _a abc_$
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 6,
-        len: 1,
-    },
-    Token {
         kind: Ident,
         offset: 7,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 9,
-        len: 1,
     },
     Token {
         kind: Ident,
@@ -58,19 +38,9 @@ $ _ $a _a abc_$
         len: 5,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 15,
-        len: 1,
-    },
-    Token {
         kind: Ident,
         offset: 16,
         len: 6,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 22,
-        len: 1,
     },
     Token {
         kind: Ident,

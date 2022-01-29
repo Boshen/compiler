@@ -1,6 +1,6 @@
 //! ECMAScript Token Kinds
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum Number {
     Decimal,
     Float,
@@ -10,7 +10,7 @@ pub enum Number {
     BigInt,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum Kind {
     Unknown,
     EOF,
@@ -136,6 +136,11 @@ pub enum Kind {
 #[allow(clippy::enum_glob_use)]
 use self::Kind::*;
 impl Kind {
+    #[must_use]
+    pub const fn is_whitespace(&self) -> bool {
+        matches!(self, WhiteSpace)
+    }
+
     // https://stackoverflow.com/questions/5519596/when-parsing-javascript-what-determines-the-meaning-of-a-slash
     #[must_use]
     pub const fn at_expr(&self) -> bool {

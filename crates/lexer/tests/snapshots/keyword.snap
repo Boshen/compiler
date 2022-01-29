@@ -1,6 +1,6 @@
 ---
 source: crates/lexer/tests/lib.rs
-assertion_line: 13
+assertion_line: 16
 expression: keyword
 
 ---
@@ -18,19 +18,9 @@ undefined
         len: 5,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 5,
-        len: 1,
-    },
-    Token {
         kind: Break,
         offset: 6,
         len: 5,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 11,
-        len: 1,
     },
     Token {
         kind: Case,
@@ -38,19 +28,9 @@ undefined
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 16,
-        len: 1,
-    },
-    Token {
         kind: Catch,
         offset: 17,
         len: 5,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 22,
-        len: 1,
     },
     Token {
         kind: Class,
@@ -58,19 +38,9 @@ undefined
         len: 5,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 28,
-        len: 1,
-    },
-    Token {
         kind: Const,
         offset: 29,
         len: 5,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 34,
-        len: 1,
     },
     Token {
         kind: Continue,
@@ -78,19 +48,9 @@ undefined
         len: 8,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 43,
-        len: 1,
-    },
-    Token {
         kind: Debugger,
         offset: 44,
         len: 8,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 52,
-        len: 1,
     },
     Token {
         kind: DefaulT,
@@ -98,19 +58,9 @@ undefined
         len: 7,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 60,
-        len: 1,
-    },
-    Token {
         kind: Delete,
         offset: 61,
         len: 6,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 67,
-        len: 1,
     },
     Token {
         kind: Do,
@@ -118,19 +68,9 @@ undefined
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 70,
-        len: 1,
-    },
-    Token {
         kind: Else,
         offset: 71,
         len: 4,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 75,
-        len: 1,
     },
     Token {
         kind: Enum,
@@ -138,19 +78,9 @@ undefined
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 80,
-        len: 1,
-    },
-    Token {
         kind: Export,
         offset: 81,
         len: 6,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 87,
-        len: 1,
     },
     Token {
         kind: Extends,
@@ -158,19 +88,9 @@ undefined
         len: 7,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 95,
-        len: 1,
-    },
-    Token {
         kind: False,
         offset: 96,
         len: 5,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 101,
-        len: 1,
     },
     Token {
         kind: FinallY,
@@ -178,19 +98,9 @@ undefined
         len: 7,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 109,
-        len: 1,
-    },
-    Token {
         kind: For,
         offset: 110,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 113,
-        len: 1,
     },
     Token {
         kind: Function,
@@ -198,19 +108,9 @@ undefined
         len: 8,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 122,
-        len: 1,
-    },
-    Token {
         kind: If,
         offset: 123,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 125,
-        len: 1,
     },
     Token {
         kind: Import,
@@ -218,19 +118,9 @@ undefined
         len: 6,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 132,
-        len: 1,
-    },
-    Token {
         kind: In,
         offset: 133,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 135,
-        len: 1,
     },
     Token {
         kind: Instanceof,
@@ -238,19 +128,9 @@ undefined
         len: 10,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 146,
-        len: 1,
-    },
-    Token {
         kind: New,
         offset: 147,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 150,
-        len: 1,
     },
     Token {
         kind: Null,
@@ -258,19 +138,9 @@ undefined
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 155,
-        len: 1,
-    },
-    Token {
         kind: Return,
         offset: 156,
         len: 6,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 162,
-        len: 1,
     },
     Token {
         kind: Super,
@@ -278,19 +148,9 @@ undefined
         len: 5,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 168,
-        len: 1,
-    },
-    Token {
         kind: Switch,
         offset: 169,
         len: 6,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 175,
-        len: 1,
     },
     Token {
         kind: This,
@@ -298,19 +158,9 @@ undefined
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 180,
-        len: 1,
-    },
-    Token {
         kind: Throw,
         offset: 181,
         len: 5,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 186,
-        len: 1,
     },
     Token {
         kind: True,
@@ -318,19 +168,9 @@ undefined
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 191,
-        len: 1,
-    },
-    Token {
         kind: Try,
         offset: 192,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 195,
-        len: 1,
     },
     Token {
         kind: Typeof,
@@ -338,19 +178,9 @@ undefined
         len: 6,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 202,
-        len: 1,
-    },
-    Token {
         kind: Var,
         offset: 203,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 206,
-        len: 1,
     },
     Token {
         kind: Void,
@@ -358,19 +188,9 @@ undefined
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 211,
-        len: 1,
-    },
-    Token {
         kind: While,
         offset: 212,
         len: 5,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 217,
-        len: 1,
     },
     Token {
         kind: With,
@@ -378,19 +198,9 @@ undefined
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 222,
-        len: 1,
-    },
-    Token {
         kind: Yield,
         offset: 223,
         len: 5,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 228,
-        len: 1,
     },
     Token {
         kind: Ident,

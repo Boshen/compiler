@@ -1,6 +1,6 @@
 ---
 source: crates/lexer/tests/lib.rs
-assertion_line: 13
+assertion_line: 16
 expression: punctuator
 
 ---
@@ -19,18 +19,8 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 1,
-        len: 1,
-    },
-    Token {
         kind: LParen,
         offset: 2,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 3,
         len: 1,
     },
     Token {
@@ -39,18 +29,8 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 5,
-        len: 1,
-    },
-    Token {
         kind: LBrack,
         offset: 6,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 7,
         len: 1,
     },
     Token {
@@ -59,18 +39,8 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 9,
-        len: 1,
-    },
-    Token {
         kind: Dot,
         offset: 10,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 11,
         len: 1,
     },
     Token {
@@ -79,18 +49,8 @@ expression: punctuator
         len: 3,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 15,
-        len: 1,
-    },
-    Token {
         kind: Semicolon,
         offset: 16,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 17,
         len: 1,
     },
     Token {
@@ -99,18 +59,8 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 19,
-        len: 1,
-    },
-    Token {
         kind: LAngle,
         offset: 20,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 21,
         len: 1,
     },
     Token {
@@ -119,19 +69,9 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 23,
-        len: 1,
-    },
-    Token {
         kind: LtEq,
         offset: 24,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 26,
-        len: 1,
     },
     Token {
         kind: GtEq,
@@ -139,19 +79,9 @@ expression: punctuator
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 29,
-        len: 1,
-    },
-    Token {
         kind: Eq2,
         offset: 30,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 32,
-        len: 1,
     },
     Token {
         kind: Neq,
@@ -159,19 +89,9 @@ expression: punctuator
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 35,
-        len: 1,
-    },
-    Token {
         kind: Eq3,
         offset: 36,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 39,
-        len: 1,
     },
     Token {
         kind: Neq2,
@@ -179,18 +99,8 @@ expression: punctuator
         len: 3,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 43,
-        len: 1,
-    },
-    Token {
         kind: Plus,
         offset: 44,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 45,
         len: 1,
     },
     Token {
@@ -199,18 +109,8 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 47,
-        len: 1,
-    },
-    Token {
         kind: Star,
         offset: 48,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 49,
         len: 1,
     },
     Token {
@@ -219,19 +119,9 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 51,
-        len: 1,
-    },
-    Token {
         kind: Star2,
         offset: 52,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 54,
-        len: 1,
     },
     Token {
         kind: Plus2,
@@ -239,19 +129,9 @@ expression: punctuator
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 57,
-        len: 1,
-    },
-    Token {
         kind: Minus2,
         offset: 58,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 60,
-        len: 1,
     },
     Token {
         kind: ShiftLeft,
@@ -259,19 +139,9 @@ expression: punctuator
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 63,
-        len: 1,
-    },
-    Token {
         kind: ShiftRight,
         offset: 64,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 66,
-        len: 1,
     },
     Token {
         kind: ShiftRight3,
@@ -279,18 +149,8 @@ expression: punctuator
         len: 3,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 70,
-        len: 1,
-    },
-    Token {
         kind: Amp,
         offset: 71,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 72,
         len: 1,
     },
     Token {
@@ -299,18 +159,8 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 74,
-        len: 1,
-    },
-    Token {
         kind: Caret,
         offset: 75,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 76,
         len: 1,
     },
     Token {
@@ -319,18 +169,8 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 78,
-        len: 1,
-    },
-    Token {
         kind: Tilde,
         offset: 79,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 80,
         len: 1,
     },
     Token {
@@ -339,19 +179,9 @@ expression: punctuator
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 83,
-        len: 1,
-    },
-    Token {
         kind: Pipe2,
         offset: 84,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 86,
-        len: 1,
     },
     Token {
         kind: Question2,
@@ -359,18 +189,8 @@ expression: punctuator
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 89,
-        len: 1,
-    },
-    Token {
         kind: Question,
         offset: 90,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 91,
         len: 1,
     },
     Token {
@@ -379,18 +199,8 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 93,
-        len: 1,
-    },
-    Token {
         kind: Eq,
         offset: 94,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 95,
         len: 1,
     },
     Token {
@@ -399,19 +209,9 @@ expression: punctuator
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 98,
-        len: 1,
-    },
-    Token {
         kind: MinusEq,
         offset: 99,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 101,
-        len: 1,
     },
     Token {
         kind: StarEq,
@@ -419,19 +219,9 @@ expression: punctuator
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 104,
-        len: 1,
-    },
-    Token {
         kind: PercentEq,
         offset: 105,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 107,
-        len: 1,
     },
     Token {
         kind: Star2Eq,
@@ -439,19 +229,9 @@ expression: punctuator
         len: 3,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 111,
-        len: 1,
-    },
-    Token {
         kind: ShiftLeftEq,
         offset: 112,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 115,
-        len: 1,
     },
     Token {
         kind: ShiftRightEq,
@@ -459,19 +239,9 @@ expression: punctuator
         len: 3,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 119,
-        len: 1,
-    },
-    Token {
         kind: ShiftRight3Eq,
         offset: 120,
         len: 4,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 124,
-        len: 1,
     },
     Token {
         kind: AmpEq,
@@ -479,19 +249,9 @@ expression: punctuator
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 127,
-        len: 1,
-    },
-    Token {
         kind: PipeEq,
         offset: 128,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 130,
-        len: 1,
     },
     Token {
         kind: CaretEq,
@@ -499,19 +259,9 @@ expression: punctuator
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 133,
-        len: 1,
-    },
-    Token {
         kind: Amp2Eq,
         offset: 134,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 137,
-        len: 1,
     },
     Token {
         kind: Pipe2Eq,
@@ -519,29 +269,14 @@ expression: punctuator
         len: 3,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 141,
-        len: 1,
-    },
-    Token {
         kind: Question2Eq,
         offset: 142,
         len: 3,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 145,
-        len: 1,
-    },
-    Token {
         kind: FatArrow,
         offset: 146,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 148,
-        len: 1,
     },
     Token {
         kind: Question,
@@ -551,11 +286,6 @@ expression: punctuator
     Token {
         kind: Dot,
         offset: 150,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 151,
         len: 1,
     },
     Token {
@@ -569,18 +299,8 @@ expression: punctuator
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 156,
-        len: 1,
-    },
-    Token {
         kind: RCurly,
         offset: 157,
-        len: 1,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 158,
         len: 1,
     },
     Token {

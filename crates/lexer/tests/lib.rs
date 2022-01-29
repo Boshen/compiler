@@ -5,7 +5,10 @@ use unindent::unindent;
 
 fn test_snapshot(name: &str, input: &str) {
     let input = unindent(input);
-    let tokens = Lexer::new(input.trim()).into_iter().collect::<Vec<_>>();
+    let tokens = Lexer::new(input.trim())
+        .into_iter()
+        .filter(|t| !t.kind().is_whitespace())
+        .collect::<Vec<_>>();
     let snapshot = format!("# Input\n{}\n---\n# Output\n{:#?}", input, tokens);
     insta::with_settings!({
         prepend_module_to_snapshot => false,

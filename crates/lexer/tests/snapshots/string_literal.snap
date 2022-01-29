@@ -1,6 +1,6 @@
 ---
 source: crates/lexer/tests/lib.rs
-assertion_line: 13
+assertion_line: 16
 expression: string_literal
 
 ---
@@ -23,19 +23,9 @@ expression: string_literal
         len: 7,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 7,
-        len: 1,
-    },
-    Token {
         kind: Str,
         offset: 8,
         len: 7,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 15,
-        len: 1,
     },
     Token {
         kind: Str,
@@ -43,19 +33,9 @@ expression: string_literal
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 18,
-        len: 1,
-    },
-    Token {
         kind: Str,
         offset: 19,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 21,
-        len: 1,
     },
     Token {
         kind: Str,
@@ -63,19 +43,9 @@ expression: string_literal
         len: 20,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 42,
-        len: 1,
-    },
-    Token {
         kind: Str,
         offset: 43,
         len: 20,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 63,
-        len: 1,
     },
     Token {
         kind: Str,
@@ -83,29 +53,14 @@ expression: string_literal
         len: 8,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 72,
-        len: 1,
-    },
-    Token {
         kind: Str,
         offset: 73,
         len: 6,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 79,
-        len: 1,
-    },
-    Token {
         kind: Str,
         offset: 80,
         len: 8,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 88,
-        len: 1,
     },
     Token {
         kind: Str,

@@ -1,6 +1,6 @@
 ---
 source: crates/lexer/tests/lib.rs
-assertion_line: 13
+assertion_line: 16
 expression: numeric_literal
 
 ---
@@ -25,11 +25,6 @@ expression: numeric_literal
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 1,
-        len: 1,
-    },
-    Token {
         kind: Number(
             BigInt,
         ),
@@ -37,21 +32,11 @@ expression: numeric_literal
         len: 2,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 4,
-        len: 1,
-    },
-    Token {
         kind: Number(
             Binary,
         ),
         offset: 5,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 8,
-        len: 1,
     },
     Token {
         kind: Number(
@@ -68,21 +53,11 @@ expression: numeric_literal
         len: 1,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 13,
-        len: 1,
-    },
-    Token {
         kind: Number(
             Octal,
         ),
         offset: 14,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 17,
-        len: 1,
     },
     Token {
         kind: Number(
@@ -92,21 +67,11 @@ expression: numeric_literal
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 22,
-        len: 1,
-    },
-    Token {
         kind: Number(
             Hex,
         ),
         offset: 23,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 26,
-        len: 1,
     },
     Token {
         kind: Number(
@@ -116,21 +81,11 @@ expression: numeric_literal
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 31,
-        len: 1,
-    },
-    Token {
         kind: Number(
             Octal,
         ),
         offset: 32,
         len: 4,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 36,
-        len: 1,
     },
     Token {
         kind: Number(
@@ -140,21 +95,11 @@ expression: numeric_literal
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 41,
-        len: 1,
-    },
-    Token {
         kind: Number(
             Float,
         ),
         offset: 42,
         len: 2,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 44,
-        len: 1,
     },
     Token {
         kind: Number(
@@ -164,21 +109,11 @@ expression: numeric_literal
         len: 3,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 48,
-        len: 1,
-    },
-    Token {
         kind: Number(
             Float,
         ),
         offset: 49,
         len: 5,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 54,
-        len: 1,
     },
     Token {
         kind: Number(
@@ -188,21 +123,11 @@ expression: numeric_literal
         len: 4,
     },
     Token {
-        kind: WhiteSpace,
-        offset: 59,
-        len: 1,
-    },
-    Token {
         kind: Number(
             Float,
         ),
         offset: 60,
         len: 3,
-    },
-    Token {
-        kind: WhiteSpace,
-        offset: 63,
-        len: 1,
     },
     Token {
         kind: Number(

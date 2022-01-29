@@ -9,4 +9,3 @@ members = [
 lto = "fat"
 codegen-units = 1
 panic = "abort"
-incremental = true

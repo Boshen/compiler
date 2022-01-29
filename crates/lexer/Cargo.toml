@@ -4,7 +4,7 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-unicode-xid = "0.2.2"
+unicode-id = { git = "https://github.com/Boshen/unicode-id" }
 
 [dev-dependencies]
 insta = "1.12.0"

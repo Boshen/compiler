@@ -1,6 +1,6 @@
 //! Lexer
 
-use unicode_xid::UnicodeXID;
+use unicode_id::UnicodeID;
 
 use crate::constants::UNICODE_SPACES;
 use crate::kind::{Kind, Number};
@@ -694,12 +694,12 @@ impl<'a> Lexer<'a> {
 
     /// Section 12.6 Detect `IdentifierStartChar`
     fn is_identifier_start(&self, c: char) -> bool {
-        c == '$' || c == '_' || c.is_xid_start() // contains c.is_ascii_alphabetic() check
+        c == '$' || c == '_' || c.is_id_start() // contains c.is_ascii_alphabetic() check
     }
 
     /// Section 12.6 Detect `IdentifierPartChar`
     fn is_identifier_part(&self, c: char) -> bool {
-        c == '$' || c == '_' || c.is_xid_continue() // contains c.is_ascii_alphanumeric() check
+        c == '$' || c == '_' || c.is_id_continue() // contains c.is_ascii_alphanumeric() check
             || c == '\u{200c}' || c == '\u{200d}'
     }
 

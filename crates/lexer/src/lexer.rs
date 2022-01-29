@@ -43,11 +43,13 @@ impl Iterator for Lexer<'_> {
             b'1'..=b'9' => self.read_number(bytes),
             b'`' => self.read_template_literal(bytes),
             b'\'' | b'"' => self.read_string_literal(bytes),
+            9 | 11 | 12 | b' ' => self.read_whitespaces(bytes),
+            b'\n' | b'\r' => self.read_line_terminators(bytes),
             _ => self
                 .read_whitespaces(bytes)
                 .or_else(|| self.read_line_terminators(bytes))
-                .or_else(|| self.read_identifier_or_keyword(bytes))
-                .or_else(|| self.read_punctuator(bytes)),
+                .or_else(|| self.read_punctuator(bytes))
+                .or_else(|| self.read_identifier_or_keyword(bytes)),
         };
 
         let token = if let Some((kind, len)) = result {
@@ -77,8 +79,7 @@ impl<'a> Lexer<'a> {
 
     /// Section 12.2 Whitespace
     fn read_whitespaces(&self, bytes: &[u8]) -> LexerReturn {
-        let len = std::str::from_utf8(bytes)
-            .unwrap()
+        let len = Lexer::from_utf8_unchecked(bytes)
             .chars()
             .take_while(|c| UNICODE_SPACES.contains(c))
             .map(char::len_utf8)
@@ -139,7 +140,7 @@ impl<'a> Lexer<'a> {
 
     /// Section 12.6.1 Identifier Names
     fn read_identifier_or_keyword(&self, bytes: &[u8]) -> LexerReturn {
-        let mut iter = std::str::from_utf8(bytes).unwrap().chars().peekable();
+        let mut iter = Lexer::from_utf8_unchecked(bytes).chars().peekable();
         let mut len = 0;
         if let Some(c) = iter.next() {
             if self.is_identifier_start(c) {
@@ -727,5 +728,13 @@ impl<'a> Lexer<'a> {
             .ok()
             .and_then(|str| str.chars().next())
             .map(char::len_utf8)
+    }
+
+    /// std::str::from_utf8_unchecked
+    /// Safefy: we assumed byte string is utf8
+    #[inline]
+    #[must_use]
+    fn from_utf8_unchecked(bytes: &[u8]) -> &str {
+        unsafe { std::str::from_utf8_unchecked(bytes) }
     }
 }

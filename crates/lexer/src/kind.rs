@@ -11,6 +11,7 @@ pub enum Number {
 }
 
 #[derive(Debug, Eq, PartialEq)]
+#[non_exhaustive]
 pub enum Kind {
     Unknown,
     EOF,

@@ -45,11 +45,15 @@ impl Iterator for Lexer<'_> {
             b'\'' | b'"' => self.read_string_literal(bytes),
             9 | 11 | 12 | b' ' => self.read_whitespaces(bytes),
             b'\n' | b'\r' => self.read_line_terminators(bytes),
+            b'$' | b'_' => self.read_identifier(bytes),
+            n if n.is_ascii_alphabetic() => self
+                .read_identifier(bytes)
+                .map(|(_, len)| (self.read_keyword(&bytes[..len]), len)),
             _ => self
-                .read_whitespaces(bytes)
+                .read_punctuator(bytes)
+                .or_else(|| self.read_whitespaces(bytes))
                 .or_else(|| self.read_line_terminators(bytes))
-                .or_else(|| self.read_punctuator(bytes))
-                .or_else(|| self.read_identifier_or_keyword(bytes)),
+                .or_else(|| self.read_identifier(bytes)),
         };
 
         let token = if let Some((kind, len)) = result {
@@ -139,7 +143,7 @@ impl<'a> Lexer<'a> {
     }
 
     /// Section 12.6.1 Identifier Names
-    fn read_identifier_or_keyword(&self, bytes: &[u8]) -> LexerReturn {
+    fn read_identifier(&self, bytes: &[u8]) -> LexerReturn {
         let mut iter = Lexer::from_utf8_unchecked(bytes).chars().peekable();
         let mut len = 0;
         if let Some(c) = iter.next() {
@@ -171,8 +175,7 @@ impl<'a> Lexer<'a> {
                 break;
             }
         }
-        let kind = self.read_keyword(&bytes[..len]);
-        Some((kind, len))
+        Some((Kind::Ident, len))
     }
 
     /// Section 12.8.4 Read `UnicodeEscapeSequence`
@@ -516,37 +519,38 @@ impl<'a> Lexer<'a> {
     fn read_binary(&self, bytes: &[u8]) -> LexerReturn {
         assert_eq!(bytes[0], b'0');
         assert!(matches!(bytes[1], b'b' | b'B'));
-        let len = bytes[2..]
+        let len = bytes
             .iter()
+            .skip(2)
             .take_while(|b| matches!(b, b'0'..=b'1'))
             .count();
         if len == 0 {
-            None
-        } else {
-            Some((Kind::Number(Number::Binary), len + 2))
+            return None;
         }
+        Some((Kind::Number(Number::Binary), len + 2))
     }
 
     fn read_octal(&self, bytes: &[u8]) -> LexerReturn {
         assert_eq!(bytes[0], b'0');
         assert!(matches!(bytes[1], b'o' | b'O'));
-        let len = bytes[2..]
+        let len = bytes
             .iter()
+            .skip(2)
             .take_while(|b| matches!(b, b'0'..=b'7'))
             .count();
         if len == 0 {
-            None
-        } else {
-            Some((Kind::Number(Number::Octal), len + 2))
+            return None;
         }
+        Some((Kind::Number(Number::Octal), len + 2))
     }
 
     fn read_legacy_octal(&self, bytes: &[u8]) -> LexerReturn {
         assert_eq!(bytes[0], b'0');
         assert!(matches!(bytes[1], b'0'..=b'9'));
         let mut kind = Number::Octal;
-        let len = bytes[1..]
+        let len = bytes
             .iter()
+            .skip(1)
             .take_while(|b| {
                 if matches!(b, b'8'..=b'9') {
                     kind = Number::Decimal;
@@ -555,54 +559,41 @@ impl<'a> Lexer<'a> {
             })
             .count();
         if len == 0 {
-            None
-        } else {
-            Some((Kind::Number(kind), len + 1))
+            return None;
         }
+        Some((Kind::Number(kind), len + 1))
     }
 
     fn read_hex(&self, bytes: &[u8]) -> LexerReturn {
         assert_eq!(bytes[0], b'0');
         assert!(matches!(bytes[1], b'x' | b'X'));
-        let len = bytes[2..]
+        let len = bytes
             .iter()
+            .skip(2)
             .take_while(|b| b.is_ascii_hexdigit())
             .count();
         if len == 0 {
-            None
-        } else {
-            Some((Kind::Number(Number::Hex), len + 2))
+            return None;
         }
+        Some((Kind::Number(Number::Hex), len + 2))
     }
 
     /// 12.8.4 String Literals
     fn read_string_literal(&self, bytes: &[u8]) -> LexerReturn {
-        match bytes[0] {
-            quote @ (b'\'' | b'"') => {
-                let mut cur = 1;
-                let mut iter = bytes[cur..].iter();
-                while let Some(b) = iter.next() {
-                    if b == &b'\\' {
-                        if let Some(size) = self.read_escape_sequence(&bytes[cur..]) {
-                            cur += size;
-                            (0..size - 1).for_each(|_| {
-                                iter.next();
-                            });
-                        } else {
-                            // TODO error
-                            return None;
-                        }
-                    } else if b == &quote {
-                        return Some((Kind::Str, cur + 1));
-                    } else {
-                        cur += 1;
-                    }
-                }
-                // TODO error
-                None
+        assert!(matches!(bytes[0], b'\'' | b'"'));
+        let mut iter = Lexer::from_utf8_unchecked(bytes).chars().peekable();
+        let quote = iter.next().unwrap();
+        let mut len = 1;
+        while let Some(b) = iter.next() {
+            len += b.len_utf8();
+            if b == '\\' && iter.peek() == Some(&quote) {
+                len += 1;
+                iter.next();
+            } else if b == quote {
+                return Some((Kind::Str, len));
             }
-            _ => None,
         }
+        None
     }
 
     /// 12.8.5 Regular Expression Literals
@@ -658,22 +649,6 @@ impl<'a> Lexer<'a> {
         None
     }
 
-    fn read_escape_sequence(&self, bytes: &[u8]) -> Option<usize> {
-        assert_eq!(bytes[0], b'\\');
-        if let Some(b) = bytes.get(1) {
-            if let Some(len) = self.read_line_terminator(&bytes[1..]) {
-                return Some(len);
-            }
-            return match b {
-                b'\\' | b'n' | b'r' | b't' | b'b' | b'v' | b'f' | b'\'' | b'"' => Some(2),
-                b'u' => Some(5),
-                b'x' => Some(3),
-                _ => self.read_unicode_char(&bytes[1..]),
-            };
-        }
-        None
-    }
-
     /// Read Slash `/`:
     ///   * Single Line Comment //
     ///   * `MultilineComment` /* */
@@ -706,28 +681,19 @@ impl<'a> Lexer<'a> {
 
     /// Read line terminator and return its length
     fn read_line_terminator(&self, bytes: &[u8]) -> Option<usize> {
-        match *bytes {
-            [b'\n', ..] => Some('\n'.len_utf8()),
-            [b'\r', ..] => Some('\r'.len_utf8()),
-            _ => {
-                if bytes.starts_with("\u{2028}".as_bytes()) {
-                    Some('\u{2028}'.len_utf8())
-                } else if bytes.starts_with("\u{2029}".as_bytes()) {
-                    Some('\u{2029}'.len_utf8())
-                } else {
-                    None
-                }
-            }
+        if bytes.get(0) == Some(&b'\n') {
+            return Some('\n'.len_utf8());
         }
-        //
-    }
-
-    /// Read the next unicode character by converting it to string
-    fn read_unicode_char(&self, bytes: &[u8]) -> Option<usize> {
-        std::str::from_utf8(bytes)
-            .ok()
-            .and_then(|str| str.chars().next())
-            .map(char::len_utf8)
+        if bytes.get(0) == Some(&b'\r') {
+            return Some('\r'.len_utf8());
+        }
+        if bytes.starts_with("\u{2028}".as_bytes()) {
+            return Some('\u{2028}'.len_utf8());
+        }
+        if bytes.starts_with("\u{2029}".as_bytes()) {
+            return Some('\u{2029}'.len_utf8());
+        }
+        None
     }
 
     /// std::str::from_utf8_unchecked

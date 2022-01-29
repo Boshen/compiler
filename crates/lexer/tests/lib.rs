@@ -40,8 +40,8 @@ fn keyword() {
 fn identifier() {
     let input = r#"
         $ _ $a _a abc_$
-        \u03bc
-        \u{61}
+        \u03bc \u{61} x\u03bc x\u{61}
+        x‍ x‌
     "#;
     test_snapshot("identifier", input);
 }

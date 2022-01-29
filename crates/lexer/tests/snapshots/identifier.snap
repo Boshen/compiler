@@ -6,8 +6,8 @@ expression: identifier
 ---
 # Input
 $ _ $a _a abc_$
-\u03bc
-\u{61}
+\u03bc \u{61} x\u03bc x\u{61}
+x‍ x‌
 
 ---
 # Output
@@ -48,8 +48,28 @@ $ _ $a _a abc_$
         len: 6,
     },
     Token {
+        kind: Ident,
+        offset: 30,
+        len: 7,
+    },
+    Token {
+        kind: Ident,
+        offset: 38,
+        len: 7,
+    },
+    Token {
+        kind: Ident,
+        offset: 46,
+        len: 4,
+    },
+    Token {
+        kind: Ident,
+        offset: 51,
+        len: 4,
+    },
+    Token {
         kind: EOF,
-        offset: 29,
+        offset: 55,
         len: 1,
     },
 ]

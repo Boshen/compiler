@@ -140,53 +140,44 @@ impl<'a> Lexer<'a> {
 
     /// Section 12.6.1 Identifier Names
     fn read_name_or_keyword(&self, bytes: &[u8]) -> LexerReturn {
-        let mut iter = std::str::from_utf8(bytes).unwrap().chars();
-        if let Some(chr) = iter.next() {
-            let mut len = 0;
-            if chr == '\\' && bytes.get(len + 1) == Some(&b'u') {
-                if let Some(size) = self.read_unicode_escape_sequence(bytes) {
-                    len += size;
-                    iter.next();
-                    iter.next();
-                    iter.next();
-                    iter.next();
-                    iter.next();
-                } else {
-                    return None;
-                }
-            } else if chr == '_' || chr == '$' || chr.is_xid_start() {
-                len += chr.len_utf8();
-            } else {
-                return None;
-            }
-            while let Some(chr) = iter.next() {
-                if chr == '\\' && bytes.get(len + 1) == Some(&b'u') {
-                    if let Some(size) = self.read_unicode_escape_sequence(&bytes[len..]) {
-                        len += size;
+        let mut iter = std::str::from_utf8(bytes).unwrap().chars().peekable();
+        let mut len = 0;
+        if let Some(c) = iter.next() {
+            if self.is_identifier_start(c) {
+                len += c.len_utf8();
+            } else if c == '\\' && iter.peek() == Some(&'u') {
+                if let Some(count) = self.read_unicode_escape_sequence(bytes) {
+                    len += count;
+                    for _ in 0..count - 1 {
                         iter.next();
-                        iter.next();
-                        iter.next();
-                        iter.next();
-                        iter.next();
-                    } else {
-                        return None;
                     }
-                } else if chr == '$' || chr.is_xid_continue() {
-                    len += chr.len_utf8();
-                } else {
-                    break;
                 }
             }
-            let kind = self.read_keyword(&bytes[..len]);
-            return Some((kind, len));
         }
-        None
+        if len == 0 {
+            return None;
+        }
+        while let Some(c) = iter.next() {
+            if self.is_identifier_part(c) {
+                len += c.len_utf8();
+            } else if c == '\\' && iter.peek() == Some(&'u') {
+                if let Some(count) = self.read_unicode_escape_sequence(&bytes[len..]) {
+                    len += count;
+                    for _ in 0..count - 1 {
+                        iter.next();
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+        let kind = self.read_keyword(&bytes[..len]);
+        Some((kind, len))
     }
 
     /// Section 12.8.4 Read `UnicodeEscapeSequence`
     /// \u followed by 4 hex
-    /// \u{digit} with 1..=6
-    /// TODO reference
+    /// \u{digit} with 1..=6 TODO reference this source
     fn read_unicode_escape_sequence(&self, bytes: &[u8]) -> Option<usize> {
         assert_eq!(bytes[0], b'\\');
         assert_eq!(bytes[1], b'u');
@@ -699,6 +690,17 @@ impl<'a> Lexer<'a> {
     }
 
     /* ---------- utils ---------- */
+
+    /// Section 12.6 Detect `IdentifierStartChar`
+    fn is_identifier_start(&self, c: char) -> bool {
+        c == '$' || c == '_' || c.is_xid_start() // contains c.is_ascii_alphabetic() check
+    }
+
+    /// Section 12.6 Detect `IdentifierPartChar`
+    fn is_identifier_part(&self, c: char) -> bool {
+        c == '$' || c == '_' || c.is_xid_continue() // contains c.is_ascii_alphanumeric() check
+            || c == '\u{200c}' || c == '\u{200d}'
+    }
 
     /// Read line terminator and return its length
     fn read_line_terminator(&self, bytes: &[u8]) -> Option<usize> {

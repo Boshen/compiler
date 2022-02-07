@@ -22,8 +22,8 @@ pub fn main() {
         group.throughput(Throughput::Bytes(code.len() as u64));
         group.bench_function(&id, |b| {
             b.iter(|| {
-                let _ = black_box(Lexer::new(code).into_iter().count());
-            })
+                black_box(Lexer::new(code).into_iter().count());
+            });
         });
     }
 

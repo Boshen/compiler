@@ -44,8 +44,8 @@ pub enum Kind {
     For,
     Function,
     If,
-    In,
     Import,
+    In,
     Instanceof,
     New,
     Return,
@@ -61,65 +61,66 @@ pub enum Kind {
     With,
     Yield,
     // 12.7 punctuators
-    LCurly,
-    RCurly,
-    LParen,
-    RParen,
-    LBrack,
-    RBrack,
+    Amp, // &
+    Amp2,
+    Amp2Eq,
+    AmpEq,
+    Bang,
+    Caret,
+    CaretEq,
+    Colon,
+    Comma,
     Dot,
     Dot3, // ...
-    Semicolon,
-    Comma,
-    LAngle,
-    RAngle,
-    LtEq, // <=
-    GtEq, // >=
     Eq,
     Eq2,
     Eq3,
-    Neq,
-    Neq2,
-    Plus,
-    Plus2,
-    PlusEq,
+    FatArrow,
+    GtEq, // >=
+    LAngle,
+    LBrack,
+    LCurly,
+    LParen,
+    LtEq, // <=
     Minus,
     Minus2,
     MinusEq,
-    Star,
-    Star2,
-    StarEq,
-    Star2Eq,
-    ShiftLeft,     // <<
-    ShiftLeftEq,   // <<=
-    ShiftRight,    // >>
-    ShiftRightEq,  // >>=
-    ShiftRight3,   // >>>
-    ShiftRight3Eq, // >>>=
-    Amp,           // &
-    AmpEq,
-    Amp2,
-    Amp2Eq,
+    Neq,
+    Neq2,
+    Percent,
+    PercentEq,
     Pipe,
-    PipeEq,
     Pipe2,
     Pipe2Eq,
-    Bang,
-    Tilde,
+    PipeEq,
+    Plus,
+    Plus2,
+    PlusEq,
     Question,
     Question2,
     Question2Eq,
     QuestionDot,
-    Caret,
-    CaretEq,
+    RAngle,
+    RBrack,
+    RCurly,
+    RParen,
+    Semicolon,
+    ShiftLeft,     // <<
+    ShiftLeftEq,   // <<=
+    ShiftRight,    // >>
+    ShiftRight3,   // >>>
+    ShiftRight3Eq, // >>>=
+    ShiftRightEq,  // >>=
     Slash,
     SlashEq,
-    FatArrow,
-    Percent,
-    PercentEq,
-    Colon,
+    Star,
+    Star2,
+    Star2Eq,
+    StarEq,
+    Tilde,
     // 12.8.1 Null Literals
     Null,
+    Undefined,
     // 12.8.2 Boolean Literals
     True,
     False,

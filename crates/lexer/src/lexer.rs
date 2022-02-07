@@ -123,7 +123,7 @@ impl<'a> Lexer<'a> {
             }
             cur += 1;
         }
-        Some((Kind::Comment, cur))
+        Some((Kind::Comment, cur - 1))
     }
 
     /// Section 12.4 Multi Line Comment
@@ -366,8 +366,8 @@ impl<'a> Lexer<'a> {
                     cur += 2;
                     Kind::Question2Eq
                 }
-                [b'?', b'.', ..] => {
-                    cur += 2;
+                [b'.', ..] => {
+                    cur += 1;
                     Kind::QuestionDot
                 }
                 [b'?', ..] => {
@@ -459,6 +459,7 @@ impl<'a> Lexer<'a> {
                     Some((Kind::Number(Number::Float), 2))
                 }
             }
+            [b'.'] => Some((Kind::Number(Number::Decimal), 2)),
             [b'n', ..] => Some((Kind::Number(Number::BigInt), 2)),
             [b'0'..=b'9', ..] => self.read_legacy_octal(bytes),
             _ => Some((Kind::Number(Number::Decimal), 1)),
@@ -696,11 +697,11 @@ impl<'a> Lexer<'a> {
         None
     }
 
-    /// std::str::from_utf8_unchecked
+    /// `std::str::from_utf8_unchecked`
     /// Safefy: we assumed byte string is utf8
     #[inline]
     #[must_use]
-    fn from_utf8_unchecked(bytes: &[u8]) -> &str {
+    const fn from_utf8_unchecked(bytes: &[u8]) -> &str {
         unsafe { std::str::from_utf8_unchecked(bytes) }
     }
 }

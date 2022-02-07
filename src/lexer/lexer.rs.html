@@ -725,16 +725,11 @@
 <span id="724">724</span>
 <span id="725">725</span>
 <span id="726">726</span>
-<span id="727">727</span>
-<span id="728">728</span>
-<span id="729">729</span>
-<span id="730">730</span>
-<span id="731">731</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Lexer</span>
 
 <span class="kw">use</span> <span class="ident">unicode_id::UnicodeID</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants::UNICODE_SPACES</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants</span>::{<span class="ident">ASCII_SPACES</span>, <span class="ident">UNICODE_SPACES</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::kind</span>::{<span class="ident">Kind</span>, <span class="ident">Number</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::State</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::token::Token</span>;
@@ -775,11 +770,17 @@
             <span class="string">b&#39;1&#39;</span>..<span class="op">=</span><span class="string">b&#39;9&#39;</span> =&gt; <span class="self">self</span>.<span class="ident">read_number</span>(<span class="ident">bytes</span>),
             <span class="string">b&#39;`&#39;</span> =&gt; <span class="self">self</span>.<span class="ident">read_template_literal</span>(<span class="ident">bytes</span>),
             <span class="string">b&#39;\&#39;&#39;</span> <span class="op">|</span> <span class="string">b&#39;&quot;&#39;</span> =&gt; <span class="self">self</span>.<span class="ident">read_string_literal</span>(<span class="ident">bytes</span>),
+            <span class="number">9</span> <span class="op">|</span> <span class="number">11</span> <span class="op">|</span> <span class="number">12</span> <span class="op">|</span> <span class="string">b&#39; &#39;</span> =&gt; <span class="self">self</span>.<span class="ident">read_ascii_whitespaces</span>(<span class="ident">bytes</span>),
+            <span class="string">b&#39;\n&#39;</span> <span class="op">|</span> <span class="string">b&#39;\r&#39;</span> =&gt; <span class="self">self</span>.<span class="ident">read_ascii_line_terminators</span>(<span class="ident">bytes</span>),
+            <span class="string">b&#39;$&#39;</span> <span class="op">|</span> <span class="string">b&#39;_&#39;</span> =&gt; <span class="self">self</span>.<span class="ident">read_identifier</span>(<span class="ident">bytes</span>),
+            <span class="ident">n</span> <span class="kw">if</span> <span class="ident">n</span>.<span class="ident">is_ascii_alphabetic</span>() =&gt; <span class="self">self</span>
+                .<span class="ident">read_identifier</span>(<span class="ident">bytes</span>)
+                .<span class="ident">map</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">len</span>)<span class="op">|</span> (<span class="self">self</span>.<span class="ident">read_keyword</span>(<span class="kw-2">&amp;</span><span class="ident">bytes</span>[..<span class="ident">len</span>]), <span class="ident">len</span>)),
+            <span class="ident">n</span> <span class="kw">if</span> <span class="ident">n</span> <span class="op">&lt;</span> <span class="number">128</span> <span class="op">&amp;&amp;</span> <span class="ident">n</span> <span class="op">!</span><span class="op">=</span> <span class="string">b&#39;\\&#39;</span> =&gt; <span class="self">self</span>.<span class="ident">read_punctuator</span>(<span class="ident">bytes</span>),
             <span class="kw">_</span> =&gt; <span class="self">self</span>
-                .<span class="ident">read_whitespaces</span>(<span class="ident">bytes</span>)
-                .<span class="ident">or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">read_line_terminators</span>(<span class="ident">bytes</span>))
-                .<span class="ident">or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">read_identifier_or_keyword</span>(<span class="ident">bytes</span>))
-                .<span class="ident">or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">read_punctuator</span>(<span class="ident">bytes</span>)),
+                .<span class="ident">read_unicode_whitespaces</span>(<span class="ident">bytes</span>)
+                .<span class="ident">or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">read_unicode_line_terminators</span>(<span class="ident">bytes</span>))
+                .<span class="ident">or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">read_identifier</span>(<span class="ident">bytes</span>)),
         };
 
         <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">kind</span>, <span class="ident">len</span>)) <span class="op">=</span> <span class="ident">result</span> {
@@ -808,9 +809,19 @@
     }
 
     <span class="doccomment">/// Section 12.2 Whitespace</span>
-    <span class="kw">fn</span> <span class="ident">read_whitespaces</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
-        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">std::str::from_utf8</span>(<span class="ident">bytes</span>)
-            .<span class="ident">unwrap</span>()
+    <span class="kw">fn</span> <span class="ident">read_ascii_whitespaces</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>
+            .<span class="ident">iter</span>()
+            .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">ASCII_SPACES</span>.<span class="ident">contains</span>(<span class="ident">c</span>))
+            .<span class="ident">count</span>();
+        <span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
+            <span class="kw">return</span> <span class="prelude-val">None</span>;
+        }
+        <span class="prelude-val">Some</span>((<span class="ident">Kind::WhiteSpace</span>, <span class="ident">len</span>))
+    }
+
+    <span class="kw">fn</span> <span class="ident">read_unicode_whitespaces</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">Lexer::from_utf8_unchecked</span>(<span class="ident">bytes</span>)
             .<span class="ident">chars</span>()
             .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">UNICODE_SPACES</span>.<span class="ident">contains</span>(<span class="ident">c</span>))
             .<span class="ident">map</span>(<span class="ident">char::len_utf8</span>)
@@ -822,19 +833,27 @@
     }
 
     <span class="doccomment">/// Section 12.3 Line Terminators</span>
-    <span class="kw">fn</span> <span class="ident">read_line_terminators</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cur</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">bytes</span>) <span class="op">=</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="ident">cur</span>..) {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">len</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_line_terminator</span>(<span class="ident">bytes</span>) {
-                <span class="ident">cur</span> <span class="op">+</span><span class="op">=</span> <span class="ident">len</span>;
-            } <span class="kw">else</span> {
-                <span class="kw">break</span>;
-            }
-        }
-        <span class="kw">if</span> <span class="ident">cur</span> <span class="op">==</span> <span class="number">0</span> {
+    <span class="kw">fn</span> <span class="ident">read_ascii_line_terminators</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>
+            .<span class="ident">iter</span>()
+            .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> [<span class="string">b&#39;\n&#39;</span>, <span class="string">b&#39;\r&#39;</span>].<span class="ident">contains</span>(<span class="ident">c</span>))
+            .<span class="ident">count</span>();
+        <span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
             <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
-        <span class="prelude-val">Some</span>((<span class="ident">Kind::LineTerminator</span>, <span class="ident">cur</span>))
+        <span class="prelude-val">Some</span>((<span class="ident">Kind::LineTerminator</span>, <span class="ident">len</span>))
+    }
+
+    <span class="kw">fn</span> <span class="ident">read_unicode_line_terminators</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">Lexer::from_utf8_unchecked</span>(<span class="ident">bytes</span>)
+            .<span class="ident">chars</span>()
+            .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> [<span class="string">&#39;\u{2028}&#39;</span>, <span class="string">&#39;\u{2029}&#39;</span>].<span class="ident">contains</span>(<span class="ident">c</span>))
+            .<span class="ident">map</span>(<span class="ident">char::len_utf8</span>)
+            .<span class="ident">sum</span>();
+        <span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
+            <span class="kw">return</span> <span class="prelude-val">None</span>;
+        }
+        <span class="prelude-val">Some</span>((<span class="ident">Kind::LineTerminator</span>, <span class="ident">len</span>))
     }
 
     <span class="doccomment">/// Section 12.4 Single Line Comment</span>
@@ -850,7 +869,7 @@
             }
             <span class="ident">cur</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
         }
-        <span class="prelude-val">Some</span>((<span class="ident">Kind::Comment</span>, <span class="ident">cur</span>))
+        <span class="prelude-val">Some</span>((<span class="ident">Kind::Comment</span>, <span class="ident">cur</span> <span class="op">-</span> <span class="number">1</span>))
     }
 
     <span class="doccomment">/// Section 12.4 Multi Line Comment</span>
@@ -870,8 +889,8 @@
     }
 
     <span class="doccomment">/// Section 12.6.1 Identifier Names</span>
-    <span class="kw">fn</span> <span class="ident">read_identifier_or_keyword</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">std::str::from_utf8</span>(<span class="ident">bytes</span>).<span class="ident">unwrap</span>().<span class="ident">chars</span>().<span class="ident">peekable</span>();
+    <span class="kw">fn</span> <span class="ident">read_identifier</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Lexer::from_utf8_unchecked</span>(<span class="ident">bytes</span>).<span class="ident">chars</span>().<span class="ident">peekable</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>() {
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_identifier_start</span>(<span class="ident">c</span>) {
@@ -902,8 +921,7 @@
                 <span class="kw">break</span>;
             }
         }
-        <span class="kw">let</span> <span class="ident">kind</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_keyword</span>(<span class="kw-2">&amp;</span><span class="ident">bytes</span>[..<span class="ident">len</span>]);
-        <span class="prelude-val">Some</span>((<span class="ident">kind</span>, <span class="ident">len</span>))
+        <span class="prelude-val">Some</span>((<span class="ident">Kind::Ident</span>, <span class="ident">len</span>))
     }
 
     <span class="doccomment">/// Section 12.8.4 Read `UnicodeEscapeSequence`</span>
@@ -1094,8 +1112,8 @@
                     <span class="ident">cur</span> <span class="op">+</span><span class="op">=</span> <span class="number">2</span>;
                     <span class="ident">Kind::Question2Eq</span>
                 }
-                [<span class="string">b&#39;?&#39;</span>, <span class="string">b&#39;.&#39;</span>, ..] =&gt; {
-                    <span class="ident">cur</span> <span class="op">+</span><span class="op">=</span> <span class="number">2</span>;
+                [<span class="string">b&#39;.&#39;</span>, ..] =&gt; {
+                    <span class="ident">cur</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
                     <span class="ident">Kind::QuestionDot</span>
                 }
                 [<span class="string">b&#39;?&#39;</span>, ..] =&gt; {
@@ -1187,6 +1205,7 @@
                     <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">Number::Float</span>), <span class="number">2</span>))
                 }
             }
+            [<span class="string">b&#39;.&#39;</span>] =&gt; <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">Number::Decimal</span>), <span class="number">2</span>)),
             [<span class="string">b&#39;n&#39;</span>, ..] =&gt; <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">Number::BigInt</span>), <span class="number">2</span>)),
             [<span class="string">b&#39;0&#39;</span>..<span class="op">=</span><span class="string">b&#39;9&#39;</span>, ..] =&gt; <span class="self">self</span>.<span class="ident">read_legacy_octal</span>(<span class="ident">bytes</span>),
             <span class="kw">_</span> =&gt; <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">Number::Decimal</span>), <span class="number">1</span>)),
@@ -1194,7 +1213,6 @@
     }
 
     <span class="doccomment">/// 12.8.3 Numeric Literals</span>
-    <span class="doccomment">/// TODO numeric separators</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::unnecessary_wraps</span>)]</span>
     <span class="kw">fn</span> <span class="ident">read_number</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
         <span class="macro">assert!</span>(<span class="ident">bytes</span>[<span class="number">0</span>].<span class="ident">is_ascii_digit</span>());
@@ -1222,6 +1240,9 @@
                         <span class="kw">return</span> <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">kind</span>), <span class="ident">len</span> <span class="op">+</span> <span class="ident">count</span>));
                     }
                 }
+                <span class="string">b&#39;_&#39;</span> =&gt; {
+                    <span class="ident">len</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+                }
                 <span class="ident">n</span> <span class="kw">if</span> <span class="ident">n</span>.<span class="ident">is_ascii_digit</span>() =&gt; {
                     <span class="ident">len</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
                 }
@@ -1247,93 +1268,81 @@
     <span class="kw">fn</span> <span class="ident">read_binary</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
         <span class="macro">assert_eq!</span>(<span class="ident">bytes</span>[<span class="number">0</span>], <span class="string">b&#39;0&#39;</span>);
         <span class="macro">assert!</span>(<span class="macro">matches!</span>(<span class="ident">bytes</span>[<span class="number">1</span>], <span class="string">b&#39;b&#39;</span> <span class="op">|</span> <span class="string">b&#39;B&#39;</span>));
-        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="number">2</span>..]
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>
             .<span class="ident">iter</span>()
-            .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> <span class="macro">matches!</span>(<span class="ident">b</span>, <span class="string">b&#39;0&#39;</span>..<span class="op">=</span><span class="string">b&#39;1&#39;</span>))
+            .<span class="ident">skip</span>(<span class="number">2</span>)
+            .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> <span class="macro">matches!</span>(<span class="ident">b</span>, <span class="string">b&#39;0&#39;</span>..<span class="op">=</span><span class="string">b&#39;1&#39;</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">b</span> <span class="op">==</span> <span class="op">&amp;&amp;</span><span class="string">b&#39;_&#39;</span>)
             .<span class="ident">count</span>();
         <span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
-            <span class="prelude-val">None</span>
-        } <span class="kw">else</span> {
-            <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">Number::Binary</span>), <span class="ident">len</span> <span class="op">+</span> <span class="number">2</span>))
+            <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
+        <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">Number::Binary</span>), <span class="ident">len</span> <span class="op">+</span> <span class="number">2</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">read_octal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
         <span class="macro">assert_eq!</span>(<span class="ident">bytes</span>[<span class="number">0</span>], <span class="string">b&#39;0&#39;</span>);
         <span class="macro">assert!</span>(<span class="macro">matches!</span>(<span class="ident">bytes</span>[<span class="number">1</span>], <span class="string">b&#39;o&#39;</span> <span class="op">|</span> <span class="string">b&#39;O&#39;</span>));
-        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="number">2</span>..]
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>
             .<span class="ident">iter</span>()
-            .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> <span class="macro">matches!</span>(<span class="ident">b</span>, <span class="string">b&#39;0&#39;</span>..<span class="op">=</span><span class="string">b&#39;7&#39;</span>))
+            .<span class="ident">skip</span>(<span class="number">2</span>)
+            .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> <span class="macro">matches!</span>(<span class="ident">b</span>, <span class="string">b&#39;0&#39;</span>..<span class="op">=</span><span class="string">b&#39;7&#39;</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">b</span> <span class="op">==</span> <span class="op">&amp;&amp;</span><span class="string">b&#39;_&#39;</span>)
             .<span class="ident">count</span>();
         <span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
-            <span class="prelude-val">None</span>
-        } <span class="kw">else</span> {
-            <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">Number::Octal</span>), <span class="ident">len</span> <span class="op">+</span> <span class="number">2</span>))
+            <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
+        <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">Number::Octal</span>), <span class="ident">len</span> <span class="op">+</span> <span class="number">2</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">read_legacy_octal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
         <span class="macro">assert_eq!</span>(<span class="ident">bytes</span>[<span class="number">0</span>], <span class="string">b&#39;0&#39;</span>);
         <span class="macro">assert!</span>(<span class="macro">matches!</span>(<span class="ident">bytes</span>[<span class="number">1</span>], <span class="string">b&#39;0&#39;</span>..<span class="op">=</span><span class="string">b&#39;9&#39;</span>));
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">kind</span> <span class="op">=</span> <span class="ident">Number::Octal</span>;
-        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="number">1</span>..]
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>
             .<span class="ident">iter</span>()
+            .<span class="ident">skip</span>(<span class="number">1</span>)
             .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> {
                 <span class="kw">if</span> <span class="macro">matches!</span>(<span class="ident">b</span>, <span class="string">b&#39;8&#39;</span>..<span class="op">=</span><span class="string">b&#39;9&#39;</span>) {
                     <span class="ident">kind</span> <span class="op">=</span> <span class="ident">Number::Decimal</span>;
                 }
-                <span class="ident">b</span>.<span class="ident">is_ascii_digit</span>()
+                <span class="ident">b</span>.<span class="ident">is_ascii_digit</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">b</span> <span class="op">==</span> <span class="op">&amp;&amp;</span><span class="string">b&#39;_&#39;</span>
             })
             .<span class="ident">count</span>();
         <span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
-            <span class="prelude-val">None</span>
-        } <span class="kw">else</span> {
-            <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">kind</span>), <span class="ident">len</span> <span class="op">+</span> <span class="number">1</span>))
+            <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
+        <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">kind</span>), <span class="ident">len</span> <span class="op">+</span> <span class="number">1</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">read_hex</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
         <span class="macro">assert_eq!</span>(<span class="ident">bytes</span>[<span class="number">0</span>], <span class="string">b&#39;0&#39;</span>);
         <span class="macro">assert!</span>(<span class="macro">matches!</span>(<span class="ident">bytes</span>[<span class="number">1</span>], <span class="string">b&#39;x&#39;</span> <span class="op">|</span> <span class="string">b&#39;X&#39;</span>));
-        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="number">2</span>..]
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">bytes</span>
             .<span class="ident">iter</span>()
-            .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> <span class="ident">b</span>.<span class="ident">is_ascii_hexdigit</span>())
+            .<span class="ident">skip</span>(<span class="number">2</span>)
+            .<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> <span class="ident">b</span>.<span class="ident">is_ascii_hexdigit</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">b</span> <span class="op">==</span> <span class="op">&amp;&amp;</span><span class="string">b&#39;_&#39;</span>)
             .<span class="ident">count</span>();
         <span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
-            <span class="prelude-val">None</span>
-        } <span class="kw">else</span> {
-            <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">Number::Hex</span>), <span class="ident">len</span> <span class="op">+</span> <span class="number">2</span>))
+            <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
+        <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">Number::Hex</span>), <span class="ident">len</span> <span class="op">+</span> <span class="number">2</span>))
     }
 
     <span class="doccomment">/// 12.8.4 String Literals</span>
     <span class="kw">fn</span> <span class="ident">read_string_literal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">LexerReturn</span> {
-        <span class="kw">match</span> <span class="ident">bytes</span>[<span class="number">0</span>] {
-            <span class="ident">quote</span> @ (<span class="string">b&#39;\&#39;&#39;</span> <span class="op">|</span> <span class="string">b&#39;&quot;&#39;</span>) =&gt; {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cur</span> <span class="op">=</span> <span class="number">1</span>;
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="ident">cur</span>..].<span class="ident">iter</span>();
-                <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">b</span>) <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>() {
-                    <span class="kw">if</span> <span class="ident">b</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="string">b&#39;\\&#39;</span> {
-                        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">size</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_escape_sequence</span>(<span class="kw-2">&amp;</span><span class="ident">bytes</span>[<span class="ident">cur</span>..]) {
-                            <span class="ident">cur</span> <span class="op">+</span><span class="op">=</span> <span class="ident">size</span>;
-                            (<span class="number">0</span>..<span class="ident">size</span> <span class="op">-</span> <span class="number">1</span>).<span class="ident">for_each</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> {
-                                <span class="ident">iter</span>.<span class="ident">next</span>();
-                            });
-                        } <span class="kw">else</span> {
-                            <span class="comment">// TODO error</span>
-                            <span class="kw">return</span> <span class="prelude-val">None</span>;
-                        }
-                    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">b</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">quote</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Some</span>((<span class="ident">Kind::Str</span>, <span class="ident">cur</span> <span class="op">+</span> <span class="number">1</span>));
-                    } <span class="kw">else</span> {
-                        <span class="ident">cur</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-                    }
-                }
-                <span class="comment">// TODO error</span>
-                <span class="prelude-val">None</span>
+        <span class="macro">assert!</span>(<span class="macro">matches!</span>(<span class="ident">bytes</span>[<span class="number">0</span>], <span class="string">b&#39;\&#39;&#39;</span> <span class="op">|</span> <span class="string">b&#39;&quot;&#39;</span>));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">Lexer::from_utf8_unchecked</span>(<span class="ident">bytes</span>).<span class="ident">chars</span>().<span class="ident">peekable</span>();
+        <span class="kw">let</span> <span class="ident">quote</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">1</span>;
+        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">b</span>) <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>() {
+            <span class="ident">len</span> <span class="op">+</span><span class="op">=</span> <span class="ident">b</span>.<span class="ident">len_utf8</span>();
+            <span class="kw">if</span> <span class="ident">b</span> <span class="op">==</span> <span class="string">&#39;\\&#39;</span> <span class="op">&amp;&amp;</span> <span class="ident">iter</span>.<span class="ident">peek</span>().<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="op">|</span><span class="ident">q</span><span class="op">|</span> <span class="ident">q</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="string">&#39;\\&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">q</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">quote</span>) {
+                <span class="ident">len</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+                <span class="ident">iter</span>.<span class="ident">next</span>();
+            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">b</span> <span class="op">==</span> <span class="ident">quote</span> {
+                <span class="kw">return</span> <span class="prelude-val">Some</span>((<span class="ident">Kind::Str</span>, <span class="ident">len</span>));
             }
-            <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
         }
+        <span class="prelude-val">None</span>
     }
 
     <span class="doccomment">/// 12.8.5 Regular Expression Literals</span>
@@ -1341,7 +1350,7 @@
         <span class="macro">assert_eq!</span>(<span class="ident">bytes</span>[<span class="number">0</span>], <span class="string">b&#39;/&#39;</span>);
         <span class="macro">assert_ne!</span>(<span class="ident">bytes</span>[<span class="number">1</span>], <span class="string">b&#39;/&#39;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cur</span> <span class="op">=</span> <span class="number">1</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">bytes</span>[<span class="ident">cur</span>..].<span class="ident">iter</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">bytes</span>.<span class="ident">iter</span>().<span class="ident">skip</span>(<span class="number">1</span>).<span class="ident">peekable</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bracket</span> <span class="op">=</span> <span class="bool-val">false</span>;
         <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">b</span>) <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>() {
             <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">b</span> {
@@ -1359,17 +1368,15 @@
                     <span class="kw">return</span> <span class="prelude-val">Some</span>((<span class="ident">Kind::Regex</span>, <span class="ident">cur</span> <span class="op">+</span> <span class="number">1</span>));
                 }
                 <span class="string">b&#39;\\&#39;</span> =&gt; {
-                    <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="ident">cur</span> <span class="op">+</span> <span class="number">1</span>) <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;/&#39;</span>) {
-                        <span class="ident">cur</span> <span class="op">+</span><span class="op">=</span> <span class="number">2</span>;
+                    <span class="kw">if</span> <span class="ident">iter</span>.<span class="ident">peek</span>().<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="op">|</span><span class="ident">q</span><span class="op">|</span> <span class="ident">q</span> <span class="op">==</span> <span class="op">&amp;&amp;</span><span class="string">b&#39;/&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">q</span> <span class="op">==</span> <span class="op">&amp;&amp;</span><span class="string">b&#39;\\&#39;</span>) {
+                        <span class="ident">cur</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
                         <span class="ident">iter</span>.<span class="ident">next</span>();
-                        <span class="kw">continue</span>;
                     }
                 }
                 <span class="kw">_</span> =&gt; {}
             }
             <span class="ident">cur</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
         }
-        <span class="comment">// TODO error</span>
         <span class="prelude-val">None</span>
     }
 
@@ -1385,22 +1392,6 @@
                 <span class="string">b&#39;`&#39;</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Some</span>((<span class="ident">Kind::Template</span>, <span class="ident">len</span> <span class="op">+</span> <span class="number">1</span>)),
                 <span class="kw">_</span> =&gt; {}
             }
-        }
-        <span class="prelude-val">None</span>
-    }
-
-    <span class="kw">fn</span> <span class="ident">read_escape_sequence</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="macro">assert_eq!</span>(<span class="ident">bytes</span>[<span class="number">0</span>], <span class="string">b&#39;\\&#39;</span>);
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">b</span>) <span class="op">=</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="number">1</span>) {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">len</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_line_terminator</span>(<span class="kw-2">&amp;</span><span class="ident">bytes</span>[<span class="number">1</span>..]) {
-                <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">len</span>);
-            }
-            <span class="kw">return</span> <span class="kw">match</span> <span class="ident">b</span> {
-                <span class="string">b&#39;\\&#39;</span> <span class="op">|</span> <span class="string">b&#39;n&#39;</span> <span class="op">|</span> <span class="string">b&#39;r&#39;</span> <span class="op">|</span> <span class="string">b&#39;t&#39;</span> <span class="op">|</span> <span class="string">b&#39;b&#39;</span> <span class="op">|</span> <span class="string">b&#39;v&#39;</span> <span class="op">|</span> <span class="string">b&#39;f&#39;</span> <span class="op">|</span> <span class="string">b&#39;\&#39;&#39;</span> <span class="op">|</span> <span class="string">b&#39;&quot;&#39;</span> =&gt; <span class="prelude-val">Some</span>(<span class="number">2</span>),
-                <span class="string">b&#39;u&#39;</span> =&gt; <span class="prelude-val">Some</span>(<span class="number">5</span>),
-                <span class="string">b&#39;x&#39;</span> =&gt; <span class="prelude-val">Some</span>(<span class="number">3</span>),
-                <span class="kw">_</span> =&gt; <span class="self">self</span>.<span class="ident">read_unicode_char</span>(<span class="kw-2">&amp;</span><span class="ident">bytes</span>[<span class="number">1</span>..]),
-            };
         }
         <span class="prelude-val">None</span>
     }
@@ -1437,28 +1428,27 @@
 
     <span class="doccomment">/// Read line terminator and return its length</span>
     <span class="kw">fn</span> <span class="ident">read_line_terminator</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">bytes</span> {
-            [<span class="string">b&#39;\n&#39;</span>, ..] =&gt; <span class="prelude-val">Some</span>(<span class="string">&#39;\n&#39;</span>.<span class="ident">len_utf8</span>()),
-            [<span class="string">b&#39;\r&#39;</span>, ..] =&gt; <span class="prelude-val">Some</span>(<span class="string">&#39;\r&#39;</span>.<span class="ident">len_utf8</span>()),
-            <span class="kw">_</span> =&gt; {
-                <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">starts_with</span>(<span class="string">&quot;\u{2028}&quot;</span>.<span class="ident">as_bytes</span>()) {
-                    <span class="prelude-val">Some</span>(<span class="string">&#39;\u{2028}&#39;</span>.<span class="ident">len_utf8</span>())
-                } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">starts_with</span>(<span class="string">&quot;\u{2029}&quot;</span>.<span class="ident">as_bytes</span>()) {
-                    <span class="prelude-val">Some</span>(<span class="string">&#39;\u{2029}&#39;</span>.<span class="ident">len_utf8</span>())
-                } <span class="kw">else</span> {
-                    <span class="prelude-val">None</span>
-                }
-            }
+        <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="number">0</span>) <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;\n&#39;</span>) {
+            <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="string">&#39;\n&#39;</span>.<span class="ident">len_utf8</span>());
         }
-        <span class="comment">//</span>
+        <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">get</span>(<span class="number">0</span>) <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;\r&#39;</span>) {
+            <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="string">&#39;\r&#39;</span>.<span class="ident">len_utf8</span>());
+        }
+        <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">starts_with</span>(<span class="string">&quot;\u{2028}&quot;</span>.<span class="ident">as_bytes</span>()) {
+            <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="string">&#39;\u{2028}&#39;</span>.<span class="ident">len_utf8</span>());
+        }
+        <span class="kw">if</span> <span class="ident">bytes</span>.<span class="ident">starts_with</span>(<span class="string">&quot;\u{2029}&quot;</span>.<span class="ident">as_bytes</span>()) {
+            <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="string">&#39;\u{2029}&#39;</span>.<span class="ident">len_utf8</span>());
+        }
+        <span class="prelude-val">None</span>
     }
 
-    <span class="doccomment">/// Read the next unicode character by converting it to string</span>
-    <span class="kw">fn</span> <span class="ident">read_unicode_char</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="ident">std::str::from_utf8</span>(<span class="ident">bytes</span>)
-            .<span class="ident">ok</span>()
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">str</span><span class="op">|</span> <span class="ident">str</span>.<span class="ident">chars</span>().<span class="ident">next</span>())
-            .<span class="ident">map</span>(<span class="ident">char::len_utf8</span>)
+    <span class="doccomment">/// `std::str::from_utf8_unchecked`</span>
+    <span class="doccomment">/// Safefy: we assumed byte string is utf8</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">from_utf8_unchecked</span>(<span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="kw-2">&amp;</span><span class="ident">str</span> {
+        <span class="kw">unsafe</span> { <span class="ident">std::str::from_utf8_unchecked</span>(<span class="ident">bytes</span>) }
     }
 }
 </code></pre></div>

@@ -167,6 +167,8 @@
 <span id="166">166</span>
 <span id="167">167</span>
 <span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
 </pre><pre class="rust"><code><span class="doccomment">//! ECMAScript Token Kinds</span>
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
@@ -180,6 +182,7 @@
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">non_exhaustive</span>]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Kind</span> {
     <span class="ident">Unknown</span>,
     <span class="ident">EOF</span>,
@@ -212,8 +215,8 @@
     <span class="ident">For</span>,
     <span class="ident">Function</span>,
     <span class="ident">If</span>,
-    <span class="ident">In</span>,
     <span class="ident">Import</span>,
+    <span class="ident">In</span>,
     <span class="ident">Instanceof</span>,
     <span class="ident">New</span>,
     <span class="ident">Return</span>,
@@ -229,65 +232,66 @@
     <span class="ident">With</span>,
     <span class="ident">Yield</span>,
     <span class="comment">// 12.7 punctuators</span>
-    <span class="ident">LCurly</span>,
-    <span class="ident">RCurly</span>,
-    <span class="ident">LParen</span>,
-    <span class="ident">RParen</span>,
-    <span class="ident">LBrack</span>,
-    <span class="ident">RBrack</span>,
+    <span class="ident">Amp</span>, <span class="comment">// &amp;</span>
+    <span class="ident">Amp2</span>,
+    <span class="ident">Amp2Eq</span>,
+    <span class="ident">AmpEq</span>,
+    <span class="ident">Bang</span>,
+    <span class="ident">Caret</span>,
+    <span class="ident">CaretEq</span>,
+    <span class="ident">Colon</span>,
+    <span class="ident">Comma</span>,
     <span class="ident">Dot</span>,
     <span class="ident">Dot3</span>, <span class="comment">// ...</span>
-    <span class="ident">Semicolon</span>,
-    <span class="ident">Comma</span>,
-    <span class="ident">LAngle</span>,
-    <span class="ident">RAngle</span>,
-    <span class="ident">LtEq</span>, <span class="comment">// &lt;=</span>
-    <span class="ident">GtEq</span>, <span class="comment">// &gt;=</span>
     <span class="ident">Eq</span>,
     <span class="ident">Eq2</span>,
     <span class="ident">Eq3</span>,
-    <span class="ident">Neq</span>,
-    <span class="ident">Neq2</span>,
-    <span class="ident">Plus</span>,
-    <span class="ident">Plus2</span>,
-    <span class="ident">PlusEq</span>,
+    <span class="ident">FatArrow</span>,
+    <span class="ident">GtEq</span>, <span class="comment">// &gt;=</span>
+    <span class="ident">LAngle</span>,
+    <span class="ident">LBrack</span>,
+    <span class="ident">LCurly</span>,
+    <span class="ident">LParen</span>,
+    <span class="ident">LtEq</span>, <span class="comment">// &lt;=</span>
     <span class="ident">Minus</span>,
     <span class="ident">Minus2</span>,
     <span class="ident">MinusEq</span>,
-    <span class="ident">Star</span>,
-    <span class="ident">Star2</span>,
-    <span class="ident">StarEq</span>,
-    <span class="ident">Star2Eq</span>,
-    <span class="ident">ShiftLeft</span>,     <span class="comment">// &lt;&lt;</span>
-    <span class="ident">ShiftLeftEq</span>,   <span class="comment">// &lt;&lt;=</span>
-    <span class="ident">ShiftRight</span>,    <span class="comment">// &gt;&gt;</span>
-    <span class="ident">ShiftRightEq</span>,  <span class="comment">// &gt;&gt;=</span>
-    <span class="ident">ShiftRight3</span>,   <span class="comment">// &gt;&gt;&gt;</span>
-    <span class="ident">ShiftRight3Eq</span>, <span class="comment">// &gt;&gt;&gt;=</span>
-    <span class="ident">Amp</span>,           <span class="comment">// &amp;</span>
-    <span class="ident">AmpEq</span>,
-    <span class="ident">Amp2</span>,
-    <span class="ident">Amp2Eq</span>,
+    <span class="ident">Neq</span>,
+    <span class="ident">Neq2</span>,
+    <span class="ident">Percent</span>,
+    <span class="ident">PercentEq</span>,
     <span class="ident">Pipe</span>,
-    <span class="ident">PipeEq</span>,
     <span class="ident">Pipe2</span>,
     <span class="ident">Pipe2Eq</span>,
-    <span class="ident">Bang</span>,
-    <span class="ident">Tilde</span>,
+    <span class="ident">PipeEq</span>,
+    <span class="ident">Plus</span>,
+    <span class="ident">Plus2</span>,
+    <span class="ident">PlusEq</span>,
     <span class="ident">Question</span>,
     <span class="ident">Question2</span>,
     <span class="ident">Question2Eq</span>,
     <span class="ident">QuestionDot</span>,
-    <span class="ident">Caret</span>,
-    <span class="ident">CaretEq</span>,
+    <span class="ident">RAngle</span>,
+    <span class="ident">RBrack</span>,
+    <span class="ident">RCurly</span>,
+    <span class="ident">RParen</span>,
+    <span class="ident">Semicolon</span>,
+    <span class="ident">ShiftLeft</span>,     <span class="comment">// &lt;&lt;</span>
+    <span class="ident">ShiftLeftEq</span>,   <span class="comment">// &lt;&lt;=</span>
+    <span class="ident">ShiftRight</span>,    <span class="comment">// &gt;&gt;</span>
+    <span class="ident">ShiftRight3</span>,   <span class="comment">// &gt;&gt;&gt;</span>
+    <span class="ident">ShiftRight3Eq</span>, <span class="comment">// &gt;&gt;&gt;=</span>
+    <span class="ident">ShiftRightEq</span>,  <span class="comment">// &gt;&gt;=</span>
     <span class="ident">Slash</span>,
     <span class="ident">SlashEq</span>,
-    <span class="ident">FatArrow</span>,
-    <span class="ident">Percent</span>,
-    <span class="ident">PercentEq</span>,
-    <span class="ident">Colon</span>,
+    <span class="ident">Star</span>,
+    <span class="ident">Star2</span>,
+    <span class="ident">Star2Eq</span>,
+    <span class="ident">StarEq</span>,
+    <span class="ident">Tilde</span>,
     <span class="comment">// 12.8.1 Null Literals</span>
     <span class="ident">Null</span>,
+    <span class="ident">Undefined</span>,
     <span class="comment">// 12.8.2 Boolean Literals</span>
     <span class="ident">True</span>,
     <span class="ident">False</span>,

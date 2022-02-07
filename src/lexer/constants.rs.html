@@ -4,8 +4,12 @@
 <span id="3">3</span>
 <span id="4">4</span>
 <span id="5">5</span>
-</pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">const</span> <span class="ident">UNICODE_SPACES</span>: [<span class="ident">char</span>; <span class="number">22</span>] <span class="op">=</span> [
-    <span class="string">&#39;\u{0009}&#39;</span>, <span class="string">&#39;\u{000B}&#39;</span>, <span class="string">&#39;\u{000C}&#39;</span>, <span class="string">&#39;\u{0020}&#39;</span>, <span class="string">&#39;\u{00A0}&#39;</span>, <span class="string">&#39;\u{1680}&#39;</span>, <span class="string">&#39;\u{2000}&#39;</span>, <span class="string">&#39;\u{2001}&#39;</span>,
+<span id="6">6</span>
+<span id="7">7</span>
+</pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ASCII_SPACES</span>: [<span class="ident">u8</span>; <span class="number">4</span>] <span class="op">=</span> [<span class="number">32</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">12</span>];
+
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">UNICODE_SPACES</span>: [<span class="ident">char</span>; <span class="number">22</span>] <span class="op">=</span> [
+    <span class="string">&#39;\u{0020}&#39;</span>, <span class="string">&#39;\u{0009}&#39;</span>, <span class="string">&#39;\u{000B}&#39;</span>, <span class="string">&#39;\u{000C}&#39;</span>, <span class="string">&#39;\u{00A0}&#39;</span>, <span class="string">&#39;\u{1680}&#39;</span>, <span class="string">&#39;\u{2000}&#39;</span>, <span class="string">&#39;\u{2001}&#39;</span>,
     <span class="string">&#39;\u{2002}&#39;</span>, <span class="string">&#39;\u{2003}&#39;</span>, <span class="string">&#39;\u{2004}&#39;</span>, <span class="string">&#39;\u{2005}&#39;</span>, <span class="string">&#39;\u{2006}&#39;</span>, <span class="string">&#39;\u{2007}&#39;</span>, <span class="string">&#39;\u{2008}&#39;</span>, <span class="string">&#39;\u{2009}&#39;</span>,
     <span class="string">&#39;\u{200A}&#39;</span>, <span class="string">&#39;\u{200B}&#39;</span>, <span class="string">&#39;\u{202F}&#39;</span>, <span class="string">&#39;\u{205F}&#39;</span>, <span class="string">&#39;\u{3000}&#39;</span>, <span class="string">&#39;\u{FEFF}&#39;</span>,
 ];

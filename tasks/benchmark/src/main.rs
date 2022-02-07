@@ -1,5 +1,3 @@
-#![warn(clippy::all, clippy::pedantic, clippy::nursery)]
-
 use benchmark::get_code;
 use criterion::{black_box, Criterion, Throughput};
 use std::time::Duration;

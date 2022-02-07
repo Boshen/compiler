@@ -1,4 +1,3 @@
-#![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 #[cfg(test)]
 use lexer::{Kind, Lexer};
 
@@ -138,7 +137,7 @@ fn identifier() {
         "x‌",
     ]
     .into_iter()
-    .for_each(|s| test(Ident, s))
+    .for_each(|s| test(Ident, s));
 }
 
 #[test]

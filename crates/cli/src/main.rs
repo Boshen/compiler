@@ -5,6 +5,8 @@ use std::fs::read_to_string;
 
 use lexer::Lexer;
 
+/// # Errors
+/// # Panics
 pub fn main() -> Result<(), pico_args::Error> {
     let mut args = Arguments::from_env();
 

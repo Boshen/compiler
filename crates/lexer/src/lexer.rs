@@ -2,7 +2,7 @@
 
 use unicode_id::UnicodeID;
 
-use crate::constants::UNICODE_SPACES;
+use crate::constants::{ASCII_SPACES, UNICODE_SPACES};
 use crate::kind::{Kind, Number};
 use crate::state::State;
 use crate::token::Token;
@@ -43,16 +43,16 @@ impl Iterator for Lexer<'_> {
             b'1'..=b'9' => self.read_number(bytes),
             b'`' => self.read_template_literal(bytes),
             b'\'' | b'"' => self.read_string_literal(bytes),
-            9 | 11 | 12 | b' ' => self.read_whitespaces(bytes),
-            b'\n' | b'\r' => self.read_line_terminators(bytes),
+            9 | 11 | 12 | b' ' => self.read_ascii_whitespaces(bytes),
+            b'\n' | b'\r' => self.read_ascii_line_terminators(bytes),
             b'$' | b'_' => self.read_identifier(bytes),
             n if n.is_ascii_alphabetic() => self
                 .read_identifier(bytes)
                 .map(|(_, len)| (self.read_keyword(&bytes[..len]), len)),
+            n if n < 128 && n != b'\\' => self.read_punctuator(bytes),
             _ => self
-                .read_punctuator(bytes)
-                .or_else(|| self.read_whitespaces(bytes))
-                .or_else(|| self.read_line_terminators(bytes))
+                .read_unicode_whitespaces(bytes)
+                .or_else(|| self.read_unicode_line_terminators(bytes))
                 .or_else(|| self.read_identifier(bytes)),
         };
 
@@ -82,7 +82,18 @@ impl<'a> Lexer<'a> {
     }
 
     /// Section 12.2 Whitespace
-    fn read_whitespaces(&self, bytes: &[u8]) -> LexerReturn {
+    fn read_ascii_whitespaces(&self, bytes: &[u8]) -> LexerReturn {
+        let len = bytes
+            .iter()
+            .take_while(|c| ASCII_SPACES.contains(c))
+            .count();
+        if len == 0 {
+            return None;
+        }
+        Some((Kind::WhiteSpace, len))
+    }
+
+    fn read_unicode_whitespaces(&self, bytes: &[u8]) -> LexerReturn {
         let len = Lexer::from_utf8_unchecked(bytes)
             .chars()
             .take_while(|c| UNICODE_SPACES.contains(c))
@@ -95,19 +106,27 @@ impl<'a> Lexer<'a> {
     }
 
     /// Section 12.3 Line Terminators
-    fn read_line_terminators(&self, bytes: &[u8]) -> LexerReturn {
-        let mut cur = 0;
-        while let Some(bytes) = bytes.get(cur..) {
-            if let Some(len) = self.read_line_terminator(bytes) {
-                cur += len;
-            } else {
-                break;
-            }
-        }
-        if cur == 0 {
+    fn read_ascii_line_terminators(&self, bytes: &[u8]) -> LexerReturn {
+        let len = bytes
+            .iter()
+            .take_while(|c| [b'\n', b'\r'].contains(c))
+            .count();
+        if len == 0 {
             return None;
         }
-        Some((Kind::LineTerminator, cur))
+        Some((Kind::LineTerminator, len))
+    }
+
+    fn read_unicode_line_terminators(&self, bytes: &[u8]) -> LexerReturn {
+        let len = Lexer::from_utf8_unchecked(bytes)
+            .chars()
+            .take_while(|c| ['\u{2028}', '\u{2029}'].contains(c))
+            .map(char::len_utf8)
+            .sum();
+        if len == 0 {
+            return None;
+        }
+        Some((Kind::LineTerminator, len))
     }
 
     /// Section 12.4 Single Line Comment

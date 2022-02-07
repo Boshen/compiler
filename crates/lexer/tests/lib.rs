@@ -35,7 +35,7 @@ fn whitespace() {
         "\u{2002}", // <USP>
         "\u{2003}", // <USP>
     ]
-    .iter()
+    .into_iter()
     .for_each(|s| {
         test(WhiteSpace, s);
     });
@@ -49,7 +49,7 @@ fn line_terminator() {
         "\u{2028}", // <LS>
         "\u{2029}", // <PS>
     ]
-    .iter()
+    .into_iter()
     .for_each(|s| {
         test(LineTerminator, s);
     });
@@ -57,7 +57,7 @@ fn line_terminator() {
 
 #[test]
 fn single_line_comment() {
-    ["//s", "// s"].iter().for_each(|s| {
+    ["//s", "// s"].into_iter().for_each(|s| {
         test(Comment, s);
     });
 }
@@ -68,7 +68,7 @@ fn multi_line_comment() {
         "/* multi line comment */",
         "/* multi * \n / line \n comment */",
     ]
-    .iter()
+    .into_iter()
     .for_each(|s| {
         test(MultilineComment, s);
     });
@@ -137,7 +137,7 @@ fn identifier() {
         "x‍",
         "x‌",
     ]
-    .iter()
+    .into_iter()
     .for_each(|s| test(Ident, s))
 }
 
@@ -213,18 +213,22 @@ fn numeric_literal() {
     [
         "0", "0789", "0.", "0E-1", "0E+1", "0e-12", "0e+12", "0e0", "0e00", "0e01", "1e1", "1e23",
     ]
-    .iter()
+    .into_iter()
     .for_each(|s| test(Number(Decimal), s));
     ["0n", "1n", "123n"]
-        .iter()
+        .into_iter()
         .for_each(|s| test(Number(BigInt), s));
-    ["0b1", "0B10"].iter().for_each(|s| test(Number(Binary), s));
+    ["0b1", "0B10"]
+        .into_iter()
+        .for_each(|s| test(Number(Binary), s));
     ["0o1", "0O12", "0123"]
-        .iter()
+        .into_iter()
         .for_each(|s| test(Number(Octal), s));
-    ["0x1", "0X12"].iter().for_each(|s| test(Number(Hex), s));
+    ["0x1", "0X12"]
+        .into_iter()
+        .for_each(|s| test(Number(Hex), s));
     ["0.123", "1.0", "1.1", "1.0e1"]
-        .iter()
+        .into_iter()
         .for_each(|s| test(Number(Float), s));
 }
 
@@ -243,7 +247,7 @@ fn string_literal() {
             '"#,
         r#""\d""#,
     ]
-    .iter()
+    .into_iter()
     .for_each(|s| test(Str, s));
 }
 
@@ -255,13 +259,13 @@ fn regex() {
         r#"/[//]/"#,
         r#"/[/]/"#,
     ]
-    .iter()
+    .into_iter()
     .for_each(|s| test(Regex, s));
 }
 
 #[test]
 fn template_literal() {
     [r#"``"#, r#"`123`"#, r#"`\`\r`"#, r#"`\\`"#]
-        .iter()
+        .into_iter()
         .for_each(|s| test(Template, s));
 }

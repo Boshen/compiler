@@ -1,112 +1,278 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 #[cfg(test)]
-use lexer::Lexer;
-use unindent::unindent;
+use lexer::{Kind, Lexer};
 
-fn test_snapshot(name: &str, input: &str) {
-    let input = unindent(input);
-    let tokens = Lexer::new(input.trim())
-        .into_iter()
-        .filter(|t| !t.kind().is_whitespace())
-        .collect::<Vec<_>>();
-    let snapshot = format!("# Input\n{}\n---\n# Output\n{:#?}", input, tokens);
-    insta::with_settings!({
-        prepend_module_to_snapshot => false,
-    }, {
-        insta::assert_snapshot!(name, snapshot, name);
+#[allow(clippy::enum_glob_use)]
+use lexer::Kind::*;
+#[allow(clippy::enum_glob_use)]
+use lexer::Number::*;
+
+// fn test_snapshot(name: &str, input: &str) {
+// let input = unindent(input);
+// let tokens = Lexer::new(input.trim())
+// .into_iter()
+// .filter(|t| !t.kind().is_whitespace())
+// .collect::<Vec<_>>();
+// let snapshot = format!("# Input\n{}\n---\n# Output\n{:#?}", input, tokens);
+// insta::with_settings!({
+// prepend_module_to_snapshot => false,
+// }, {
+// insta::assert_snapshot!(name, snapshot, name);
+// });
+// }
+
+fn test(kind: Kind, input: &str) {
+    let tokens = Lexer::new(input).into_iter().collect::<Vec<_>>();
+    assert_eq!(tokens.len() - 1, 1, "{kind:?} {input} {tokens:?}");
+    let token = tokens.first().unwrap();
+    assert_eq!(token.kind(), &kind, "{kind:?} {input} {tokens:?}");
+    assert_eq!(token.range(), 0..input.len(), "{kind:?} {input} {tokens:?}");
+}
+
+#[test]
+fn eof() {
+    let input = "";
+    let tokens = Lexer::new(input).into_iter().collect::<Vec<_>>();
+    assert_eq!(tokens.len(), 1);
+    assert_eq!(tokens.first().unwrap().kind(), &EOF);
+}
+
+#[test]
+fn whitespace() {
+    [
+        "\u{0009}", // <Tab>
+        "\u{000B}", // <VT>
+        "\u{000C}", // <FF>
+        "\u{0020}", // <SP>
+        "\u{00A0}", // <NBSP>
+        "\u{FEFF}", // <ZWNBSP>
+        "\u{2002}", // <USP>
+        "\u{2003}", // <USP>
+    ]
+    .iter()
+    .for_each(|s| {
+        test(WhiteSpace, s);
     });
 }
 
 #[test]
-fn comment() {
-    let input = "
-        // comment
-        /* multiline comment */
-    ";
-    test_snapshot("comment", input);
+fn line_terminator() {
+    [
+        "\u{000A}", // <LF>
+        "\u{000D}", // <CR>
+        "\u{2028}", // <LS>
+        "\u{2029}", // <PS>
+    ]
+    .iter()
+    .for_each(|s| {
+        test(LineTerminator, s);
+    });
 }
 
 #[test]
-fn keyword() {
-    let input = "
-        await break case catch class const continue debugger default delete do else enum export extends
-        false finally for function if import in instanceof new null return super switch this throw true try typeof var void while with yield
-        undefined
-    ";
-    test_snapshot("keyword", input);
+fn single_line_comment() {
+    ["//s", "// s"].iter().for_each(|s| {
+        test(Comment, s);
+    });
+}
+
+#[test]
+fn multi_line_comment() {
+    [
+        "/* multi line comment */",
+        "/* multi * \n / line \n comment */",
+    ]
+    .iter()
+    .for_each(|s| {
+        test(MultilineComment, s);
+    });
+}
+
+#[test]
+fn reserved_word() {
+    [
+        (Await, "await"),
+        (Break, "break"),
+        (Case, "case"),
+        (Catch, "catch"),
+        (Class, "class"),
+        (Const, "const"),
+        (Continue, "continue"),
+        (Debugger, "debugger"),
+        (DefaulT, "default"),
+        (Delete, "delete"),
+        (Do, "do"),
+        (Else, "else"),
+        (Enum, "enum"),
+        (Export, "export"),
+        (Extends, "extends"),
+        (FinallY, "finally"),
+        (For, "for"),
+        (Function, "function"),
+        (If, "if"),
+        (Import, "import"),
+        (In, "in"),
+        (Instanceof, "instanceof"),
+        (New, "new"),
+        (Return, "return"),
+        (Super, "super"),
+        (Switch, "switch"),
+        (This, "this"),
+        (Throw, "throw"),
+        (Try, "try"),
+        (Typeof, "typeof"),
+        (Var, "var"),
+        (Void, "void"),
+        (While, "while"),
+        (With, "with"),
+        (Yield, "yield"),
+        (Null, "null"),
+        (True, "true"),
+        (False, "false"),
+    ]
+    .into_iter()
+    .for_each(|(kind, s)| {
+        test(kind, s);
+    });
 }
 
 #[test]
 fn identifier() {
-    let input = r#"
-        $ _ $a _a abc_$
-        \u03bc \u{61} x\u03bc x\u{61}
-        x‍ x‌
-    "#;
-    test_snapshot("identifier", input);
+    [
+        "$",
+        "_",
+        "$a",
+        "_a",
+        "abc_$",
+        r#"\u03bc"#,
+        r#"\u{61}"#,
+        r#"x\u03bc"#,
+        "x\u{61}",
+        "x‍",
+        "x‌",
+    ]
+    .iter()
+    .for_each(|s| test(Ident, s))
 }
 
 #[test]
 fn punctuator() {
-    let input = "
-        { ( ) [ ] . ... ; , < > <= >= == != === !== + - * % ** ++ -- << >> >>> & | ^ ! ~ && || ?? ? : = +=
-        -= *= %= **= <<= >>= >>>= &= |= ^= &&= ||= ??= =>
-        ?. / /= }
-        #
-    ";
-    test_snapshot("punctuator", input);
+    [
+        (Amp, "&"),
+        (Amp2, "&&"),
+        (Amp2Eq, "&&="),
+        (AmpEq, "&="),
+        (Bang, "!"),
+        (Caret, "^"),
+        (CaretEq, "^="),
+        (Colon, ":"),
+        (Comma, ","),
+        (Dot, "."),
+        (Dot3, "..."),
+        (Eq, "="),
+        (Eq2, "=="),
+        (Eq3, "==="),
+        (FatArrow, "=>"),
+        (GtEq, ">="),
+        (LAngle, "<"),
+        (LBrack, "["),
+        (LCurly, "{"),
+        (LParen, "("),
+        (LtEq, "<="),
+        (Minus, "-"),
+        (Minus2, "--"),
+        (MinusEq, "-="),
+        (Neq, "!="),
+        (Neq2, "!=="),
+        (Percent, "%"),
+        (PercentEq, "%="),
+        (Pipe, "|"),
+        (Pipe2, "||"),
+        (Pipe2Eq, "||="),
+        (PipeEq, "|="),
+        (Plus, "+"),
+        (Plus2, "++"),
+        (PlusEq, "+="),
+        (Question, "?"),
+        (Question2, "??"),
+        (Question2Eq, "??="),
+        (QuestionDot, "?."),
+        (RAngle, ">"),
+        (RBrack, "]"),
+        (RCurly, "}"),
+        (RParen, ")"),
+        (Semicolon, ";"),
+        (ShiftLeft, "<<"),
+        (ShiftLeftEq, "<<="),
+        (ShiftRight, ">>"),
+        (ShiftRight3, ">>>"),
+        (ShiftRight3Eq, ">>>="),
+        (ShiftRightEq, ">>="),
+        (Slash, "/"),
+        (SlashEq, "/="),
+        (Star, "*"),
+        (Star2, "**"),
+        (Star2Eq, "**="),
+        (StarEq, "*="),
+        (Tilde, "~"),
+    ]
+    .into_iter()
+    .for_each(|(kind, s)| {
+        test(kind, s);
+    });
 }
 
 #[test]
 fn numeric_literal() {
-    let input = "
-        0 0n
-        0b1 0B12
-        0o1 0O12
-        0x1 0X12
-        0123 0789
-        0. 0.0 0.123
-        1n
-        123n
-        1.0 1.1 1.1.foo
-        0E-1 0E+1 0e-12 0e+12
-        0e0 0e00 0e01
-        1e1 1e23
-        1.0e1 1.0e1
-    ";
-    test_snapshot("numeric_literal", input);
+    [
+        "0", "0789", "0.", "0E-1", "0E+1", "0e-12", "0e+12", "0e0", "0e00", "0e01", "1e1", "1e23",
+        "1.0e1",
+    ]
+    .iter()
+    .for_each(|s| test(Number(Decimal), s));
+    ["0n", "1n", "123n"]
+        .iter()
+        .for_each(|s| test(Number(BigInt), s));
+    ["0b1", "0B12"].iter().for_each(|s| test(Number(Binary), s));
+    ["0o1", "0O12", "0123"]
+        .iter()
+        .for_each(|s| test(Number(Octal), s));
+    ["0x1", "0X12"].iter().for_each(|s| test(Number(Hex), s));
+    ["0.123", "1.0", "1.1"]
+        .iter()
+        .for_each(|s| test(Number(Float), s));
 }
 
-#[test]
-fn string_literal() {
-    let input = r#"
-        "12345" '12345'
-        "" ''
-        '\\\n\r\t\b\v\f\'\"'
-        '\\\n\r\t\b\v\f\'\"'
-        '\u1234' '\x12'
-        'foo \
-        '
-        "\d"
-    "#;
-    test_snapshot("string_literal", input);
-}
+// #[test]
+// fn string_literal() {
+// let input = r#"
+// "12345" '12345'
+// "" ''
+// '\\\n\r\t\b\v\f\'\"'
+// '\\\n\r\t\b\v\f\'\"'
+// '\u1234' '\x12'
+// 'foo \
+// '
+// "\d"
+// "#;
+// test_snapshot("string_literal", input);
+// }
 
-#[test]
-fn regex() {
-    let input = r#"
-        /aa/;
-        /[0-9A-Za-z_\$(|)\[\]\/\\^]/;
-        /[//]/;
-        /[/]/;
-    "#;
-    test_snapshot("regex", input);
-}
+// #[test]
+// fn regex() {
+// let input = r#"
+// /aa/;
+// /[0-9A-Za-z_\$(|)\[\]\/\\^]/;
+// /[//]/;
+// /[/]/;
+// "#;
+// test_snapshot("regex", input);
+// }
 
-#[test]
-fn template_literal() {
-    let input = r#"
-        `` `123` `\`\r` `\\`
-    "#;
-    test_snapshot("template_literal", input);
-}
+// #[test]
+// fn template_literal() {
+// let input = r#"
+// `` `123` `\`\r` `\\`
+// "#;
+// test_snapshot("template_literal", input);
+// }

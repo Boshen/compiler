@@ -123,7 +123,7 @@ impl<'a> Lexer<'a> {
             }
             cur += 1;
         }
-        Some((Kind::Comment, cur))
+        Some((Kind::Comment, cur - 1))
     }
 
     /// Section 12.4 Multi Line Comment
@@ -366,8 +366,8 @@ impl<'a> Lexer<'a> {
                     cur += 2;
                     Kind::Question2Eq
                 }
-                [b'?', b'.', ..] => {
-                    cur += 2;
+                [b'.', ..] => {
+                    cur += 1;
                     Kind::QuestionDot
                 }
                 [b'?', ..] => {

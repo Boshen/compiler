@@ -608,7 +608,7 @@ impl<'a> Lexer<'a> {
         let mut len = 1;
         while let Some(b) = iter.next() {
             len += b.len_utf8();
-            if b == '\\' && iter.peek() == Some(&quote) {
+            if b == '\\' && iter.peek().map_or(false, |q| q == &'\\' || q == &quote) {
                 len += 1;
                 iter.next();
             } else if b == quote {
@@ -623,7 +623,7 @@ impl<'a> Lexer<'a> {
         assert_eq!(bytes[0], b'/');
         assert_ne!(bytes[1], b'/');
         let mut cur = 1;
-        let mut iter = bytes[cur..].iter();
+        let mut iter = bytes.iter().skip(1).peekable();
         let mut bracket = false;
         while let Some(b) = iter.next() {
             match &b {
@@ -641,10 +641,9 @@ impl<'a> Lexer<'a> {
                     return Some((Kind::Regex, cur + 1));
                 }
                 b'\\' => {
-                    if bytes.get(cur + 1) == Some(&b'/') {
-                        cur += 2;
+                    if iter.peek().map_or(false, |q| q == &&b'/' || q == &&b'\\') {
+                        cur += 1;
                         iter.next();
-                        continue;
                     }
                 }
                 _ => {}

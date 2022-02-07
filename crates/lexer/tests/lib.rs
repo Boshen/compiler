@@ -241,12 +241,12 @@ fn string_literal() {
         r#""12345""#,
         r#"'12345'"#,
         r#"'\\\n\r\t\b\v\f\'\"'"#,
-        r#"'\\\n\r\t\b\v\f\'\"'"#,
         r#"'\u1234'"#,
         r#"'\x12'"#,
         r#"'foo \
             '"#,
         r#""\d""#,
+        r#""\\""#,
     ]
     .into_iter()
     .for_each(|s| test(Str, s));
@@ -259,6 +259,7 @@ fn regex() {
         r#"/[0-9A-Za-z_\$(|)\[\]\/\\^]/"#,
         r#"/[//]/"#,
         r#"/[/]/"#,
+        r#"/\\/"#,
     ]
     .into_iter()
     .for_each(|s| test(Regex, s));

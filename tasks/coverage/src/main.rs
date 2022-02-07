@@ -43,8 +43,6 @@ fn main() {
 
     let codes = entries
         .par_iter()
-        // TODO: unicode
-        .filter(|path| !path.contains("unicode"))
         .map(|path| {
             let code = fs::read_to_string(path).unwrap();
             (

@@ -212,22 +212,23 @@ fn punctuator() {
 fn numeric_literal() {
     [
         "0", "0789", "0.", "0E-1", "0E+1", "0e-12", "0e+12", "0e0", "0e00", "0e01", "1e1", "1e23",
+        "123_456",
     ]
     .into_iter()
     .for_each(|s| test(Number(Decimal), s));
-    ["0n", "1n", "123n"]
+    ["0n", "1n", "123n", "1_2n"]
         .into_iter()
         .for_each(|s| test(Number(BigInt), s));
-    ["0b1", "0B10"]
+    ["0b1", "0B10", "0b0_1"]
         .into_iter()
         .for_each(|s| test(Number(Binary), s));
-    ["0o1", "0O12", "0123"]
+    ["0o1", "0O12", "0123", "0o1_2"]
         .into_iter()
         .for_each(|s| test(Number(Octal), s));
-    ["0x1", "0X12"]
+    ["0x1", "0X12", "0x1_2"]
         .into_iter()
         .for_each(|s| test(Number(Hex), s));
-    ["0.123", "1.0", "1.1", "1.0e1"]
+    ["0.123", "1.0", "1.1", "1.0e1", "1.1_2"]
         .into_iter()
         .for_each(|s| test(Number(Float), s));
 }

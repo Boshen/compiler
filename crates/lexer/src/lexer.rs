@@ -486,7 +486,6 @@ impl<'a> Lexer<'a> {
     }
 
     /// 12.8.3 Numeric Literals
-    /// TODO numeric separators
     #[allow(clippy::unnecessary_wraps)]
     fn read_number(&self, bytes: &[u8]) -> LexerReturn {
         assert!(bytes[0].is_ascii_digit());
@@ -513,6 +512,9 @@ impl<'a> Lexer<'a> {
                     if let Some(count) = self.read_number_exponent_part(&bytes[len..]) {
                         return Some((Kind::Number(kind), len + count));
                     }
+                }
+                b'_' => {
+                    len += 1;
                 }
                 n if n.is_ascii_digit() => {
                     len += 1;
@@ -542,7 +544,7 @@ impl<'a> Lexer<'a> {
         let len = bytes
             .iter()
             .skip(2)
-            .take_while(|b| matches!(b, b'0'..=b'1'))
+            .take_while(|b| matches!(b, b'0'..=b'1') || b == &&b'_')
             .count();
         if len == 0 {
             return None;
@@ -556,7 +558,7 @@ impl<'a> Lexer<'a> {
         let len = bytes
             .iter()
             .skip(2)
-            .take_while(|b| matches!(b, b'0'..=b'7'))
+            .take_while(|b| matches!(b, b'0'..=b'7') || b == &&b'_')
             .count();
         if len == 0 {
             return None;
@@ -575,7 +577,7 @@ impl<'a> Lexer<'a> {
                 if matches!(b, b'8'..=b'9') {
                     kind = Number::Decimal;
                 }
-                b.is_ascii_digit()
+                b.is_ascii_digit() || b == &&b'_'
             })
             .count();
         if len == 0 {
@@ -590,7 +592,7 @@ impl<'a> Lexer<'a> {
         let len = bytes
             .iter()
             .skip(2)
-            .take_while(|b| b.is_ascii_hexdigit())
+            .take_while(|b| b.is_ascii_hexdigit() || b == &&b'_')
             .count();
         if len == 0 {
             return None;
@@ -649,7 +651,6 @@ impl<'a> Lexer<'a> {
             }
             cur += 1;
         }
-        // TODO error
         None
     }
 

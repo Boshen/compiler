@@ -1,5 +1,6 @@
 //! Lexer
 
+use nudge::unlikely;
 use unicode_id::UnicodeID;
 
 use crate::constants::{ASCII_SPACES, UNICODE_SPACES};
@@ -27,7 +28,7 @@ impl Iterator for Lexer<'_> {
     type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.cur >= self.bytes.len() {
+        if unlikely(self.cur >= self.bytes.len()) {
             if self.eof {
                 return None;
             }

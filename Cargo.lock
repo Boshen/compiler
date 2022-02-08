@@ -354,6 +354,7 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 name = "lexer"
 version = "0.0.0"
 dependencies = [
+ "nudge",
  "unicode-id",
 ]
 
@@ -408,6 +409,12 @@ dependencies = [
  "adler",
  "autocfg",
 ]
+
+[[package]]
+name = "nudge"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "781c68ecbdf9dedefc7b31311629a05403e30a6ab845bc8b2609a1b85626f861"
 
 [[package]]
 name = "num-traits"

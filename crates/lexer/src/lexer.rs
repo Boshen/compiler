@@ -209,7 +209,11 @@ impl<'a> Lexer<'a> {
                     for _ in 0..count - 1 {
                         iter.next();
                     }
+                } else {
+                    return None;
                 }
+            } else {
+                return None;
             }
         }
         if len == 0 {
@@ -224,6 +228,8 @@ impl<'a> Lexer<'a> {
                     for _ in 0..count - 1 {
                         iter.next();
                     }
+                } else {
+                    return None;
                 }
             } else {
                 break;
@@ -546,9 +552,11 @@ impl<'a> Lexer<'a> {
                     break;
                 }
                 b'e' | b'E' => {
-                    if let Some(count) = self.read_number_exponent_part(&bytes[len..]) {
-                        return Some((Kind::Number(kind), len + count));
-                    }
+                    return if let Some(count) = self.read_number_exponent_part(&bytes[len..]) {
+                        Some((Kind::Number(kind), len + count))
+                    } else {
+                        None
+                    };
                 }
                 b'_' => {
                     len += 1;

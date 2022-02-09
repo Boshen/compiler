@@ -576,11 +576,9 @@ impl<'a> Lexer<'a> {
                     break;
                 }
                 b'e' | b'E' => {
-                    return if let Some(count) = self.read_number_exponent_part(&bytes[len..]) {
-                        Some((Kind::Number(kind), len + count))
-                    } else {
-                        None
-                    };
+                    return self
+                        .read_number_exponent_part(&bytes[len..])
+                        .map(|count| (Kind::Number(kind), len + count));
                 }
                 b'_' => {
                     len += 1;

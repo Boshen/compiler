@@ -756,6 +756,36 @@
 <span id="755">755</span>
 <span id="756">756</span>
 <span id="757">757</span>
+<span id="758">758</span>
+<span id="759">759</span>
+<span id="760">760</span>
+<span id="761">761</span>
+<span id="762">762</span>
+<span id="763">763</span>
+<span id="764">764</span>
+<span id="765">765</span>
+<span id="766">766</span>
+<span id="767">767</span>
+<span id="768">768</span>
+<span id="769">769</span>
+<span id="770">770</span>
+<span id="771">771</span>
+<span id="772">772</span>
+<span id="773">773</span>
+<span id="774">774</span>
+<span id="775">775</span>
+<span id="776">776</span>
+<span id="777">777</span>
+<span id="778">778</span>
+<span id="779">779</span>
+<span id="780">780</span>
+<span id="781">781</span>
+<span id="782">782</span>
+<span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Lexer</span>
 <span class="kw">use</span> <span class="ident">unicode_id::UnicodeID</span>;
 
@@ -967,7 +997,11 @@
                     <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">count</span> <span class="op">-</span> <span class="number">1</span> {
                         <span class="ident">iter</span>.<span class="ident">next</span>();
                     }
+                } <span class="kw">else</span> {
+                    <span class="kw">return</span> <span class="prelude-val">None</span>;
                 }
+            } <span class="kw">else</span> {
+                <span class="kw">return</span> <span class="prelude-val">None</span>;
             }
         }
         <span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
@@ -982,6 +1016,8 @@
                     <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">count</span> <span class="op">-</span> <span class="number">1</span> {
                         <span class="ident">iter</span>.<span class="ident">next</span>();
                     }
+                } <span class="kw">else</span> {
+                    <span class="kw">return</span> <span class="prelude-val">None</span>;
                 }
             } <span class="kw">else</span> {
                 <span class="kw">break</span>;
@@ -993,45 +1029,69 @@
     <span class="doccomment">/// Section 12.6.2 Keywords and Reserved Words</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">read_keyword</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">Kind</span> {
-        <span class="kw">match</span> <span class="ident">bytes</span> {
-            <span class="string">b&quot;await&quot;</span> =&gt; <span class="ident">Kind::Await</span>,
-            <span class="string">b&quot;break&quot;</span> =&gt; <span class="ident">Kind::Break</span>,
-            <span class="string">b&quot;case&quot;</span> =&gt; <span class="ident">Kind::Case</span>,
-            <span class="string">b&quot;catch&quot;</span> =&gt; <span class="ident">Kind::Catch</span>,
-            <span class="string">b&quot;class&quot;</span> =&gt; <span class="ident">Kind::Class</span>,
-            <span class="string">b&quot;const&quot;</span> =&gt; <span class="ident">Kind::Const</span>,
-            <span class="string">b&quot;continue&quot;</span> =&gt; <span class="ident">Kind::Continue</span>,
-            <span class="string">b&quot;debugger&quot;</span> =&gt; <span class="ident">Kind::Debugger</span>,
-            <span class="string">b&quot;default&quot;</span> =&gt; <span class="ident">Kind::DefaulT</span>,
-            <span class="string">b&quot;delete&quot;</span> =&gt; <span class="ident">Kind::Delete</span>,
-            <span class="string">b&quot;do&quot;</span> =&gt; <span class="ident">Kind::Do</span>,
-            <span class="string">b&quot;else&quot;</span> =&gt; <span class="ident">Kind::Else</span>,
-            <span class="string">b&quot;enum&quot;</span> =&gt; <span class="ident">Kind::Enum</span>,
-            <span class="string">b&quot;export&quot;</span> =&gt; <span class="ident">Kind::Export</span>,
-            <span class="string">b&quot;extends&quot;</span> =&gt; <span class="ident">Kind::Extends</span>,
-            <span class="string">b&quot;false&quot;</span> =&gt; <span class="ident">Kind::False</span>,
-            <span class="string">b&quot;finally&quot;</span> =&gt; <span class="ident">Kind::FinallY</span>,
-            <span class="string">b&quot;for&quot;</span> =&gt; <span class="ident">Kind::For</span>,
-            <span class="string">b&quot;function&quot;</span> =&gt; <span class="ident">Kind::Function</span>,
-            <span class="string">b&quot;if&quot;</span> =&gt; <span class="ident">Kind::If</span>,
-            <span class="string">b&quot;in&quot;</span> =&gt; <span class="ident">Kind::In</span>,
-            <span class="string">b&quot;import&quot;</span> =&gt; <span class="ident">Kind::Import</span>,
-            <span class="string">b&quot;instanceof&quot;</span> =&gt; <span class="ident">Kind::Instanceof</span>,
-            <span class="string">b&quot;new&quot;</span> =&gt; <span class="ident">Kind::New</span>,
-            <span class="string">b&quot;null&quot;</span> =&gt; <span class="ident">Kind::Null</span>,
-            <span class="string">b&quot;return&quot;</span> =&gt; <span class="ident">Kind::Return</span>,
-            <span class="string">b&quot;super&quot;</span> =&gt; <span class="ident">Kind::Super</span>,
-            <span class="string">b&quot;switch&quot;</span> =&gt; <span class="ident">Kind::Switch</span>,
-            <span class="string">b&quot;this&quot;</span> =&gt; <span class="ident">Kind::This</span>,
-            <span class="string">b&quot;throw&quot;</span> =&gt; <span class="ident">Kind::Throw</span>,
-            <span class="string">b&quot;try&quot;</span> =&gt; <span class="ident">Kind::Try</span>,
-            <span class="string">b&quot;true&quot;</span> =&gt; <span class="ident">Kind::True</span>,
-            <span class="string">b&quot;typeof&quot;</span> =&gt; <span class="ident">Kind::Typeof</span>,
-            <span class="string">b&quot;var&quot;</span> =&gt; <span class="ident">Kind::Var</span>,
-            <span class="string">b&quot;void&quot;</span> =&gt; <span class="ident">Kind::Void</span>,
-            <span class="string">b&quot;while&quot;</span> =&gt; <span class="ident">Kind::While</span>,
-            <span class="string">b&quot;with&quot;</span> =&gt; <span class="ident">Kind::With</span>,
-            <span class="string">b&quot;yield&quot;</span> =&gt; <span class="ident">Kind::Yield</span>,
+        <span class="kw">match</span> <span class="ident">bytes</span>.<span class="ident">len</span>() {
+            <span class="number">2</span> =&gt; <span class="kw">match</span> <span class="ident">bytes</span> {
+                <span class="string">b&quot;do&quot;</span> =&gt; <span class="ident">Kind::Do</span>,
+                <span class="string">b&quot;if&quot;</span> =&gt; <span class="ident">Kind::If</span>,
+                <span class="string">b&quot;in&quot;</span> =&gt; <span class="ident">Kind::In</span>,
+                <span class="kw">_</span> =&gt; <span class="ident">Kind::Ident</span>,
+            },
+            <span class="number">3</span> =&gt; <span class="kw">match</span> <span class="ident">bytes</span> {
+                <span class="string">b&quot;new&quot;</span> =&gt; <span class="ident">Kind::New</span>,
+                <span class="string">b&quot;try&quot;</span> =&gt; <span class="ident">Kind::Try</span>,
+                <span class="string">b&quot;var&quot;</span> =&gt; <span class="ident">Kind::Var</span>,
+                <span class="string">b&quot;for&quot;</span> =&gt; <span class="ident">Kind::For</span>,
+                <span class="kw">_</span> =&gt; <span class="ident">Kind::Ident</span>,
+            },
+            <span class="number">4</span> =&gt; <span class="kw">match</span> <span class="ident">bytes</span> {
+                <span class="string">b&quot;case&quot;</span> =&gt; <span class="ident">Kind::Case</span>,
+                <span class="string">b&quot;else&quot;</span> =&gt; <span class="ident">Kind::Else</span>,
+                <span class="string">b&quot;enum&quot;</span> =&gt; <span class="ident">Kind::Enum</span>,
+                <span class="string">b&quot;this&quot;</span> =&gt; <span class="ident">Kind::This</span>,
+                <span class="string">b&quot;true&quot;</span> =&gt; <span class="ident">Kind::True</span>,
+                <span class="string">b&quot;void&quot;</span> =&gt; <span class="ident">Kind::Void</span>,
+                <span class="string">b&quot;with&quot;</span> =&gt; <span class="ident">Kind::With</span>,
+                <span class="string">b&quot;null&quot;</span> =&gt; <span class="ident">Kind::Null</span>,
+                <span class="kw">_</span> =&gt; <span class="ident">Kind::Ident</span>,
+            },
+            <span class="number">5</span> =&gt; <span class="kw">match</span> <span class="ident">bytes</span> {
+                <span class="string">b&quot;await&quot;</span> =&gt; <span class="ident">Kind::Await</span>,
+                <span class="string">b&quot;break&quot;</span> =&gt; <span class="ident">Kind::Break</span>,
+                <span class="string">b&quot;catch&quot;</span> =&gt; <span class="ident">Kind::Catch</span>,
+                <span class="string">b&quot;class&quot;</span> =&gt; <span class="ident">Kind::Class</span>,
+                <span class="string">b&quot;const&quot;</span> =&gt; <span class="ident">Kind::Const</span>,
+                <span class="string">b&quot;false&quot;</span> =&gt; <span class="ident">Kind::False</span>,
+                <span class="string">b&quot;while&quot;</span> =&gt; <span class="ident">Kind::While</span>,
+                <span class="string">b&quot;super&quot;</span> =&gt; <span class="ident">Kind::Super</span>,
+                <span class="string">b&quot;throw&quot;</span> =&gt; <span class="ident">Kind::Throw</span>,
+                <span class="string">b&quot;yield&quot;</span> =&gt; <span class="ident">Kind::Yield</span>,
+                <span class="kw">_</span> =&gt; <span class="ident">Kind::Ident</span>,
+            },
+            <span class="number">6</span> =&gt; <span class="kw">match</span> <span class="ident">bytes</span> {
+                <span class="string">b&quot;delete&quot;</span> =&gt; <span class="ident">Kind::Delete</span>,
+                <span class="string">b&quot;export&quot;</span> =&gt; <span class="ident">Kind::Export</span>,
+                <span class="string">b&quot;import&quot;</span> =&gt; <span class="ident">Kind::Import</span>,
+                <span class="string">b&quot;return&quot;</span> =&gt; <span class="ident">Kind::Return</span>,
+                <span class="string">b&quot;switch&quot;</span> =&gt; <span class="ident">Kind::Switch</span>,
+                <span class="string">b&quot;typeof&quot;</span> =&gt; <span class="ident">Kind::Typeof</span>,
+                <span class="kw">_</span> =&gt; <span class="ident">Kind::Ident</span>,
+            },
+            <span class="number">7</span> =&gt; <span class="kw">match</span> <span class="ident">bytes</span> {
+                <span class="string">b&quot;default&quot;</span> =&gt; <span class="ident">Kind::DefaulT</span>,
+                <span class="string">b&quot;extends&quot;</span> =&gt; <span class="ident">Kind::Extends</span>,
+                <span class="string">b&quot;finally&quot;</span> =&gt; <span class="ident">Kind::FinallY</span>,
+                <span class="kw">_</span> =&gt; <span class="ident">Kind::Ident</span>,
+            },
+            <span class="number">8</span> =&gt; <span class="kw">match</span> <span class="ident">bytes</span> {
+                <span class="string">b&quot;continue&quot;</span> =&gt; <span class="ident">Kind::Continue</span>,
+                <span class="string">b&quot;debugger&quot;</span> =&gt; <span class="ident">Kind::Debugger</span>,
+                <span class="string">b&quot;function&quot;</span> =&gt; <span class="ident">Kind::Function</span>,
+                <span class="kw">_</span> =&gt; <span class="ident">Kind::Ident</span>,
+            },
+            <span class="number">10</span> =&gt; <span class="kw">match</span> <span class="ident">bytes</span> {
+                <span class="string">b&quot;instanceof&quot;</span> =&gt; <span class="ident">Kind::Instanceof</span>,
+                <span class="kw">_</span> =&gt; <span class="ident">Kind::Ident</span>,
+            },
             <span class="kw">_</span> =&gt; <span class="ident">Kind::Ident</span>,
         }
     }
@@ -1304,9 +1364,9 @@
                     <span class="kw">break</span>;
                 }
                 <span class="string">b&#39;e&#39;</span> <span class="op">|</span> <span class="string">b&#39;E&#39;</span> =&gt; {
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">count</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_number_exponent_part</span>(<span class="kw-2">&amp;</span><span class="ident">bytes</span>[<span class="ident">len</span>..]) {
-                        <span class="kw">return</span> <span class="prelude-val">Some</span>((<span class="ident">Kind::Number</span>(<span class="ident">kind</span>), <span class="ident">len</span> <span class="op">+</span> <span class="ident">count</span>));
-                    }
+                    <span class="kw">return</span> <span class="self">self</span>
+                        .<span class="ident">read_number_exponent_part</span>(<span class="kw-2">&amp;</span><span class="ident">bytes</span>[<span class="ident">len</span>..])
+                        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">count</span><span class="op">|</span> (<span class="ident">Kind::Number</span>(<span class="ident">kind</span>), <span class="ident">len</span> <span class="op">+</span> <span class="ident">count</span>));
                 }
                 <span class="string">b&#39;_&#39;</span> =&gt; {
                     <span class="ident">len</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;

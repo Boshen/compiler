@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 lexer = { path = "../../crates/lexer" }
 
+pico-args = "0.3.4"
 criterion = {version = "0.3", default-features = false }
 ureq = "2.4.0"
 url = "2.2.2"

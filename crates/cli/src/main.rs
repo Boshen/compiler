@@ -10,7 +10,7 @@ use lexer::Lexer;
 pub fn main() -> Result<(), pico_args::Error> {
     let mut args = Arguments::from_env();
 
-    let path: String = args.free_from_str()?.unwrap();
+    let path = args.free_from_str::<String>()?;
 
     let code = read_to_string(&path).unwrap();
 

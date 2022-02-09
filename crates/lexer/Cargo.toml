@@ -5,4 +5,3 @@ edition = "2021"
 
 [dependencies]
 unicode-id = "0.3.0"
-nudge = "0.2.2"

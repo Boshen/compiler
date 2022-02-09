@@ -1,13 +1,21 @@
 use benchmark::get_code;
 use criterion::{black_box, Criterion, Throughput};
+use pico_args::Arguments;
 use std::time::Duration;
 
 use lexer::Lexer;
 
 pub fn main() {
+    let mut args = Arguments::from_env();
+    let baseline: Option<String> = args.opt_value_from_str("--save-baseline").unwrap();
+
     let mut criterion = Criterion::default()
         .without_plots()
         .measurement_time(Duration::new(10, 0));
+
+    if let Some(ref baseline) = baseline {
+        criterion = criterion.save_baseline(baseline.to_string());
+    }
 
     let mut group = criterion.benchmark_group("lexer");
 

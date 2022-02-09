@@ -9,7 +9,7 @@ This project is my attempt to learn and build a [ECMAScript] compiler from scrat
 
 ```bash
 cargo install watch
-cargo watch -x test -x clippy
+cargo watch -x test -x lint
 ```
 
 <!-- Links -->

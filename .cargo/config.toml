@@ -1,5 +1,5 @@
 [alias]
+lint = "clippy --workspace --all-targets"
 coverage = "run -p coverage --release --"
 benchmark = "run -p benchmark --release --"
 cli = "run -p cli --"
-lint = "clippy --workspace --all-targets"
